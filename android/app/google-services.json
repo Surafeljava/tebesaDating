@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "659375248519",
+    "project_id": "tebesadating",
+    "storage_bucket": "tebesadating.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:659375248519:android:a1ff188c91fe6c45a2d422",
+        "android_client_info": {
+          "package_name": "com.tebesa.dating"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "659375248519-jjqjh5latt10mlrusuekvjbmru4206ck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tebesa.dating",
+            "certificate_hash": "a507f55de73367bcc62b555f58c73c0a9e554061"
+          }
+        },
+        {
+          "client_id": "659375248519-97bqv27q4gtd361hvh00qr0tfai1curm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6A_96TOgpMNLYAU4ubtM8bKBwrn3_4Ww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "659375248519-97bqv27q4gtd361hvh00qr0tfai1curm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
