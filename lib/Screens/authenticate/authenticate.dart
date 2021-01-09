@@ -1,6 +1,7 @@
 import 'package:dating/Screens/authenticate/sign_in.dart';
 import 'package:dating/Services/authService.dart';
 import 'package:flutter/material.dart';
+import 'package:spring_button/spring_button.dart';
 
 class Authenticate extends StatefulWidget {
   @override
@@ -15,39 +16,126 @@ class _AuthenticateState extends State<Authenticate> {
 
   @override
   Widget build(BuildContext context) {
-    return signIn==0 ? Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            RaisedButton(
-              child: Text('Sign In (Anon)', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: Colors.grey[800]),),
-              color: Colors.orange,
-              onPressed: (){
-                setState(() {
-                  signIn = 1;
-                });
-              },
+    return Scaffold(
+      body: signIn==0 ? Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [
+                      Color(0xFFFFC2D7),
+                      Colors.white
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter
+                )
             ),
-            RaisedButton(
-              child: Text('Sign in with Google', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 20, color: Colors.grey[800]),),
-              color: Colors.grey[100],
-              onPressed: (){
-                _authService.signInAnon();
-              },
+          ),
+
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+
+                Spacer(flex: 2,),
+
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/logo/tebesa_logo_100.png'),
+                      fit: BoxFit.cover
+                    )
+                  ),
+                ),
+
+                Spacer(flex: 1,),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Center(
+                    child: Text('By tapping log in, you agree with our terms of service and privacy policy.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),),
+                  ),
+                ),
+
+                SizedBox(height: 20.0,),
+
+                SpringButton(
+                  SpringButtonType.OnlyScale,
+                  Container(
+                    width: MediaQuery.of(context).size.width/1.2,
+                    height: 50.0,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFD12043),
+                        borderRadius: BorderRadius.circular(10.0)
+                    ),
+                    child: Center(
+                      child:
+                      Text(
+                        'Log In with phone number',
+                        style: TextStyle(color: Colors.white, fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                  useCache: false,
+                  onTap: () {
+                    setState(() {
+                      signIn = 1;
+                    });
+                  },
+                ),
+
+                SizedBox(height: 10.0,),
+
+                SpringButton(
+                  SpringButtonType.OnlyScale,
+                  Container(
+                    width: MediaQuery.of(context).size.width/1.2,
+                    height: 50.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(
+                        width: 2.0,
+                        color: Color(0xFFD12043),
+                      ),
+                    ),
+                    child: Center(
+                      child:
+                      Text(
+                        'Log In with email address',
+                        style: TextStyle(color: Color(0xFFD12043), fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                  useCache: false,
+                  onTap: () {
+                    setState(() {
+                      signIn = 1;
+                    });
+                  },
+                ),
+
+                Spacer(flex: 3,),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Center(
+                    child: Text('Terms of service and privacy policy', textAlign: TextAlign.center, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),),
+                  ),
+                ),
+
+                SizedBox(height: 15.0,),
+              ],
             ),
-            RaisedButton(
-              child: Text('Sign in with Phone', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 20, color: Colors.white),),
-              color: Colors.pinkAccent,
-              onPressed: (){
-                _authService.signInAnon();
-              },
-            ),
-          ],
-        ),
-      )
-    ) : SignIn();
+          ),
+        ],
+      ) : SignIn(),
+    );
   }
 }

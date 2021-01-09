@@ -42,7 +42,7 @@ class AuthService{
       auth.User user = result.user;
       return _fromFirebaseUserToUser(user);
     } catch (e) {
-      print('The Error: ${e.toString()}');
+      print('************ The Error: ${e.toString()} :************');
       return null;
     }
   }
@@ -54,7 +54,8 @@ class AuthService{
 
   //Signin with OTP
   signInWithOTP(smsCode, verId){
-    auth.AuthCredential authCreds = auth.PhoneAuthProvider.getCredential(verificationId: verId, smsCode: smsCode);
+    print('************ WITH OTP Function ************');
+    auth.AuthCredential authCreds = auth.PhoneAuthProvider.credential(verificationId: verId, smsCode: smsCode);
     signIn(authCreds);
   }
 
