@@ -1,4 +1,5 @@
 import 'package:country_codes/country_codes.dart';
+import 'package:dating/Screens/authenticate/AuthState.dart';
 import 'package:dating/Services/authService.dart';
 import 'package:dating/Services/locationService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
+import 'AuthState.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -54,7 +57,12 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back, color: Color(0xFFD12043),),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Color(0xFFD12043),),
+          onPressed: (){
+            Provider.of<AuthState>(context, listen: false).setUserIn(0);
+          },
+        ),
         elevation: 0.0,
         backgroundColor: Colors.white,
       ),
@@ -85,7 +93,7 @@ class _SignInState extends State<SignIn> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(!verify ? 'My Phone Number' : 'Enter OTP', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0, letterSpacing: 0.0, color: Colors.grey[400]),),
+                  Text(!verify ? 'My Phone Number' : 'Enter OTP', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0, letterSpacing: 0.0, color: Colors.grey[500]),),
                   Text(!verify ? '$_phone' : '$_opt', style: TextStyle(fontWeight: FontWeight.w300, fontSize: !verify ? 18.0 : 24.0, letterSpacing: 1.0, color: Colors.black54),),
                 ],
               ),
@@ -129,7 +137,6 @@ class _SignInState extends State<SignIn> {
               ),
               initialCountryCode: 'ET',
               onChanged: (phone) {
-//                  print(phone.completeNumber);
                 setState(() {
                   _phone = phone.completeNumber;
                 });
@@ -159,16 +166,22 @@ class _SignInState extends State<SignIn> {
                 enableActiveFill: true,
 //                  controller: _verify,
                 onCompleted: (v) {
-                  _authService.signInWithOTP(_opt, _verificationId);
+                  try{
+                    _authService.signInWithOTP(_opt, _verificationId);
+                  }catch(e){
+                    setState(() {
+                      errorGot = true;
+                      errorMessage = 'Wrong OPT';
+                    });
+                  }
+
                 },
                 onChanged: (value) {
-                  print(value);
                   setState(() {
                     _opt = value.toString();
                   });
                 },
                 beforeTextPaste: (text) {
-                  print("Allowing to paste $text");
                   return true;
                 },
               ),
@@ -180,11 +193,11 @@ class _SignInState extends State<SignIn> {
 
             SizedBox(height: 25.0,),
 
-            Text(verify ? _otpText : _phoneAuthText, textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w300, fontSize: 17.0),),
+            Center(child: Text(verify ? _otpText : _phoneAuthText, textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w300, fontSize: 17.0),)),
 
             SizedBox(height: 25.0,),
 
-            Center(
+            verify ? Container() : Center(
               child: SpringButton(
                 SpringButtonType.OnlyScale,
                 Container(

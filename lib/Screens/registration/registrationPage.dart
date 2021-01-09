@@ -1,3 +1,7 @@
+import 'package:dating/Screens/registration/RegistrationState.dart';
+import 'package:dating/Screens/registration/addPhotos.dart';
+import 'package:dating/Screens/registration/genderChoose.dart';
+import 'package:dating/Screens/registration/profileDetails.dart';
 import 'package:dating/Screens/registration/registration.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,21 +15,30 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text('Registration Page'),
-          SizedBox(height: 20.0,),
-          RaisedButton(
-            child: Text('Register', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 20, color: Colors.white),),
-            color: Colors.pinkAccent,
-            onPressed: (){
-              Provider.of<Registration>(context, listen: false).setUserIn(1);
-            },
-          ),
-        ],
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Color(0xFFD12043),),
+          onPressed: (){
+            Provider.of<RegistrationState>(context, listen: false).setRegistrationPage(0);
+          },
+        ),
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+      ),
+      body: Container(
+        color: Colors.white,
+        child: getThePage(Provider.of<RegistrationState>(context).getRegistrationPage),
       ),
     );
+  }
+
+  Widget getThePage(int val){
+    if(val==0){
+      return GenderChoose();
+    }else if(val==1){
+      return ProfileDetails();
+    }else{
+      return AddPhotos();
+    }
   }
 }

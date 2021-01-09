@@ -1,7 +1,9 @@
 import 'package:dating/Screens/authenticate/sign_in.dart';
 import 'package:dating/Services/authService.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
+import 'AuthState.dart';
 
 class Authenticate extends StatefulWidget {
   @override
@@ -12,12 +14,12 @@ class _AuthenticateState extends State<Authenticate> {
 
   AuthService _authService = new AuthService();
 
-  int signIn = 0;
+  static int signIn = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: signIn==0 ? Stack(
+      body: Provider.of<AuthState>(context).getUserIn==0 ? Stack(
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
@@ -85,7 +87,7 @@ class _AuthenticateState extends State<Authenticate> {
                   useCache: false,
                   onTap: () {
                     setState(() {
-                      signIn = 1;
+                      Provider.of<AuthState>(context, listen: false).setUserIn(1);
                     });
                   },
                 ),
@@ -116,7 +118,7 @@ class _AuthenticateState extends State<Authenticate> {
                   useCache: false,
                   onTap: () {
                     setState(() {
-                      signIn = 1;
+                      Provider.of<AuthState>(context, listen: false).setUserIn(1);
                     });
                   },
                 ),
