@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:dating/Screens/registration/RegistrationState.dart';
+import 'package:dating/Screens/registration/registrationDataState.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
 
@@ -20,13 +25,16 @@ class _GenderChooseState extends State<GenderChoose> {
 
   bool done = false;
 
+  final String manIcon = 'assets/icons/man.svg';
+  final String womanIcon = 'assets/icons/woman.svg';
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15.0),
       color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
         children: [
           Text('Select your \ngender', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 22.0, letterSpacing: 0.0, color: Colors.grey[800]),),
           SizedBox(height: 25.0,),
@@ -42,13 +50,19 @@ class _GenderChooseState extends State<GenderChoose> {
                   height: (MediaQuery.of(context).size.width-50)/2,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.0),
-                    color: Colors.grey[200],
+                    color: Colors.grey[100],
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('F', style: TextStyle(fontSize: 50, fontWeight: FontWeight.w600, color: Colors.grey[600]),),
-                      Text('Female', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400, color: selected==0 ? Color(0xFFD12043) : Colors.grey[600]),),
+                      SvgPicture.asset(
+                        womanIcon,
+                        width: 50.0,
+                        height: 50.0,
+                        color: selected==0 ? Color(0xFFD12043) : Colors.grey[600],
+                      ),
+                      SizedBox(height: 10.0,),
+                      Text('Female', style: TextStyle(fontSize: 20, fontWeight: selected==0 ? FontWeight.w600 : FontWeight.w400, color: selected==0 ? Color(0xFFD12043) : Colors.grey[600]),),
                     ],
                   ),
                 ),
@@ -56,6 +70,8 @@ class _GenderChooseState extends State<GenderChoose> {
                 onTap: () {
                   setState(() {
                     selected = 0;
+                    gender = 'Female';
+                    done = true;
                   });
                 },
               ),
@@ -68,13 +84,19 @@ class _GenderChooseState extends State<GenderChoose> {
                   height: (MediaQuery.of(context).size.width-50)/2,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.0),
-                    color: Colors.grey[200],
+                    color: Colors.grey[100],
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('M', style: TextStyle(fontSize: 50, fontWeight: FontWeight.w600, color: Colors.grey[600]),),
-                      Text('Male', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400, color: selected==1 ? Color(0xFFD12043) : Colors.grey[600]),),
+                      SvgPicture.asset(
+                        manIcon,
+                        width: 50.0,
+                        height: 50.0,
+                        color: selected==1 ? Color(0xFFD12043) : Colors.grey[600],
+                      ),
+                      SizedBox(height: 10.0,),
+                      Text('Male', style: TextStyle(fontSize: 20, fontWeight: selected==1 ? FontWeight.w600 : FontWeight.w400, color: selected==1 ? Color(0xFFD12043) : Colors.grey[600]),),
                     ],
                   ),
                 ),
@@ -82,6 +104,8 @@ class _GenderChooseState extends State<GenderChoose> {
                 onTap: () {
                   setState(() {
                     selected = 1;
+                    gender = 'Male';
+                    done = true;
                   });
                 },
               ),
@@ -126,14 +150,14 @@ class _GenderChooseState extends State<GenderChoose> {
                 width: MediaQuery.of(context).size.width/1.2,
                 height: 50.0,
                 decoration: BoxDecoration(
-                    color: done ? Colors.grey[200] : Color(0xFFD12043),
+                    color: !done ? Colors.grey[200] : Color(0xFFD12043),
                     borderRadius: BorderRadius.circular(10.0)
                 ),
                 child: Center(
                   child:
                   Text(
                     'Continue',
-                    style: TextStyle(color: done ? Colors.grey[800] : Colors.white, fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: !done ? Colors.grey[800] : Colors.white, fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -141,8 +165,11 @@ class _GenderChooseState extends State<GenderChoose> {
               onTap: () {
 
                 //add to the main list
+                if(done){
 
-                Provider.of<RegistrationState>(context, listen: false).setRegistrationPage(2);
+                  Provider.of<RegistrationDataState>(context, listen: false).AddPageOneData(gender, interest);
+                  Provider.of<RegistrationState>(context, listen: false).setRegistrationPage(1);
+                }
 
               },
             ),

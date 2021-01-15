@@ -14,20 +14,26 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xFFD12043),),
-          onPressed: (){
-            Provider.of<RegistrationState>(context, listen: false).setRegistrationPage(0);
-          },
+    return WillPopScope(
+      onWillPop: (){
+        Provider.of<RegistrationState>(context, listen: false).setRegistrationPage(0);
+        return Future.value(false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Color(0xFFD12043),),
+            onPressed: (){
+              Provider.of<RegistrationState>(context, listen: false).setRegistrationPage(0);
+            },
+          ),
+          elevation: 0.0,
+          backgroundColor: Colors.white,
         ),
-        elevation: 0.0,
-        backgroundColor: Colors.white,
-      ),
-      body: Container(
-        color: Colors.white,
-        child: getThePage(Provider.of<RegistrationState>(context).getRegistrationPage),
+        body: Container(
+          color: Colors.white,
+          child: getThePage(Provider.of<RegistrationState>(context).getRegistrationPage),
+        ),
       ),
     );
   }

@@ -1,4 +1,4 @@
-import 'package:dating/Models/userModel.dart';
+import 'package:dating/Models/userAuthModel.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class AuthService{

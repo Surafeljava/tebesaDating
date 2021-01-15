@@ -39,6 +39,9 @@ dependencies:
   intl_phone_field: ^1.4.2
   pin_code_fields: 5.2.0
   spring_button: ^1.0.14
+  multi_masked_formatter: ^0.1.1
+  flutter_svg:
+  image_picker: ^0.6.7+21
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +65,7 @@ flutter:
     - assets/icons/
     - assets/lottie/
     - assets/logo/
+    - assets/icons/navigation/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

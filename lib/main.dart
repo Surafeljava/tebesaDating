@@ -2,6 +2,7 @@ import 'package:dating/Screens/Home/wrapper.dart';
 import 'package:dating/Screens/authenticate/AuthState.dart';
 import 'package:dating/Screens/registration/RegistrationState.dart';
 import 'package:dating/Screens/registration/registration.dart';
+import 'package:dating/Screens/registration/registrationDataState.dart';
 import 'package:dating/Services/authService.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -36,12 +37,15 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => RegistrationState(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => RegistrationDataState(),
+        ),
       ],
       child: MaterialApp(
           title: 'Flutter Demo',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            primarySwatch: Colors.blue,
+            primarySwatch: Colors.pink,
           ),
           home: Wrapper()
       ),
