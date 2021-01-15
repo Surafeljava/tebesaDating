@@ -21,17 +21,32 @@ class DatabaseService with ChangeNotifier{
   Future<String> uploadProfileImage(File image, String name) async {
 
     fbStore.Reference ref = fbStore.FirebaseStorage.instance.ref('userImages/$name');
-
     fbStore.TaskSnapshot uploadTask = await ref.putFile(image);
 
     final String downloadUrl = await uploadTask.ref.getDownloadURL();
-    print('******* Database Service ******* $downloadUrl');
     return downloadUrl;
 
   }
 
   Future<void> addNewUser(UserModel _userModel, String _uid) async {
     await userCollection.doc(_uid).set(_userModel.toJson());
+    await addNewUserAdditionalData();
+  }
+
+  Future<void> addNewUserAdditionalData() async{
+    String uid = FirebaseAuth.instance.currentUser.uid.toString();
+    await userCollection.doc(uid).update({'lastSeen':[], 'messages':[], 'likes':[]});
+  }
+
+  Future<UserModel> getMyInfo() async{
+    String _uid = FirebaseAuth.instance.currentUser.uid.toString();
+    var result = await firestoreInstance.collection('users').doc(_uid).get();
+    return UserModel.fromJson(result);
+  }
+
+  Future<void> getNewDates() async{
+    UserModel me = await getMyInfo();
+
   }
 
 }

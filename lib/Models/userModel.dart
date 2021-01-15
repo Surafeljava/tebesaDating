@@ -8,7 +8,6 @@ class UserModel{
   final String gender;
   final String interest;
   final List<dynamic> photos;
-  final List<dynamic> lastSeenDates;
   final String bio;
 
   UserModel({
@@ -19,7 +18,6 @@ class UserModel{
     @required this.gender,
     @required this.interest,
     @required this.photos,
-    @required this.lastSeenDates,
     @required this.bio,
   });
 
@@ -32,7 +30,6 @@ class UserModel{
       gender: json['gender'],
       interest: json['interest'],
       photos: json['photos'],
-      lastSeenDates: json['lastSeenDates'],
       bio: json['bio'],
     );
   }
@@ -46,7 +43,6 @@ class UserModel{
         'gender': gender,
         'interest': interest,
         'photos': photos,
-        'lastSeenDates': lastSeenDates,
         'bio': bio,
       };
 

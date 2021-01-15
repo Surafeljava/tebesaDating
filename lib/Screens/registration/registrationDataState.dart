@@ -33,6 +33,6 @@ class RegistrationDataState with ChangeNotifier{
     notifyListeners();
   }
 
-  UserModel get getRegistrationData => UserModel(uid: FirebaseAuth.instance.currentUser.uid, email: email, fullName: fullName, bDate: bDate, gender: gender, interest: interest, photos: photos, lastSeenDates: [], bio: bio);
+  UserModel get getRegistrationData => UserModel(uid: FirebaseAuth.instance.currentUser.uid, email: email, fullName: fullName, bDate: bDate, gender: gender, interest: interest, photos: photos, bio: bio);
 
 }
