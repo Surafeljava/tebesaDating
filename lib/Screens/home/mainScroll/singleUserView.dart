@@ -1,35 +1,52 @@
+import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
 
 class SingleUserView extends StatefulWidget {
+
+  @required final userModel;
+  SingleUserView({this.userModel});
+
   @override
   _SingleUserViewState createState() => _SingleUserViewState();
 }
 
 class _SingleUserViewState extends State<SingleUserView> {
+
+  List<String> pics = ['assets/test/user1.jpg','assets/test/user2.jpg','assets/test/user3.jpg','assets/test/user4.jpg','assets/test/user5.jpg'];
+
+  int selectedPic = 0;
+
   @override
   Widget build(BuildContext context) {
     return Container(
         color: Colors.white,
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.all(10.0),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: MediaQuery.of(context).size.width/1.2,
-              height: MediaQuery.of(context).size.width/1.1,
+              height: MediaQuery.of(context).size.width/1.0,
               decoration: BoxDecoration(
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(20.0),
+                image: DecorationImage(
+                  image: AssetImage(pics[selectedPic]),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
+
+            Spacer(flex: 1,),
 
             Container(
               height: 65,
               child: ListView.builder(
-                itemCount: 5,
+                itemCount: pics.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index){
                   return Padding(
@@ -39,12 +56,18 @@ class _SingleUserViewState extends State<SingleUserView> {
                       decoration: BoxDecoration(
                         color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(10.0),
+                        image: DecorationImage(
+                          image: AssetImage(pics[index]),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   );
                 },
               ),
             ),
+
+            Spacer(flex: 1,),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -56,6 +79,8 @@ class _SingleUserViewState extends State<SingleUserView> {
                 ],
               ),
             ),
+
+            Spacer(flex: 1,),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -82,7 +107,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                   ),
                   useCache: false,
                   onTap: (){
-                    print('Money');
+                    changePage('Money', this.context);
                   },
                 ),
 
@@ -108,7 +133,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                   ),
                   useCache: false,
                   onTap: (){
-                    print('Dis-Like');
+                    changePage('DisLike', this.context);
                   },
                 ),
 
@@ -134,7 +159,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                   ),
                   useCache: false,
                   onTap: (){
-                    print('Like');
+                    changePage('Like', this.context);
                   },
                 ),
 
@@ -160,15 +185,23 @@ class _SingleUserViewState extends State<SingleUserView> {
                   ),
                   useCache: false,
                   onTap: (){
-                    print('Like');
+                    changePage('Favorite', this.context);
                   },
                 ),
 
               ],
             ),
 
+            Spacer(flex: 2,),
+
           ],
         )
     );
   }
+
+  void changePage(String from, BuildContext context){
+    Provider.of<MainHomeState>(context, listen: false).changeMainHomePage();
+    print('Page change from: $from');
+  }
+
 }

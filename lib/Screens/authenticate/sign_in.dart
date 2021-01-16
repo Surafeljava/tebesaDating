@@ -85,7 +85,7 @@ class _SignInState extends State<SignIn> {
                   return DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: index.isEven ? Colors.white : Colors.white,
+                      color: index.isEven ? Colors.redAccent : Colors.redAccent,
                     ),
                   );
                 },

@@ -46,7 +46,16 @@ class DatabaseService with ChangeNotifier{
 
   Future<void> getNewDates() async{
     UserModel me = await getMyInfo();
-
+    //TODO finish this function
   }
+
+  //For MainMessagingPage and Deleting Account
+  Future<List<dynamic>> getMyMessagesList() async{
+    String _uid = FirebaseAuth.instance.currentUser.uid.toString();
+    var result = await firestoreInstance.collection('users').doc(_uid).get();
+    return result['messages'];
+  }
+
+
 
 }

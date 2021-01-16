@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dating/Models/userAuthModel.dart' as  usr;
+import 'package:dating/Models/userModel.dart';
+import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:dating/Screens/home/mainScroll/singleUserView.dart';
 import 'package:dating/Screens/registration/registration.dart';
 import 'package:dating/Services/authService.dart';
+import 'package:dating/Services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class MainHome extends StatefulWidget {
   @override
@@ -14,6 +20,7 @@ class MainHome extends StatefulWidget {
 class _MainHomeState extends State<MainHome> {
 
   AuthService _authService = new AuthService();
+  DatabaseService _databaseService = new DatabaseService();
 
   String menuIcon = 'assets/icons/menuIcon.svg';
 
@@ -24,23 +31,147 @@ class _MainHomeState extends State<MainHome> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  UserModel user;
+  bool userDataCollected = false;
+
+  PageController profilesScroll = new PageController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _databaseService.getMyInfo().then((value){
+      setState(() {
+        user = value;
+      });
+      setState(() {
+        userDataCollected = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawer(
+      drawer: userDataCollected ? Drawer(
         child: Container(
           color: Colors.white,
-          child: ListView(
+          child: Column(
             children: [
-              ListTile(
-                leading: Icon(Icons.email,color:Color(0xFFD12043),),
-                title: Text('About Tebesa'),
-                subtitle: Text('Description about the app.'),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 250.0,
+                margin: EdgeInsets.only(bottom: 8.0),
+                child: PageView.builder(
+                  itemCount: user.photos.length,
+                  scrollDirection: Axis.horizontal,
+                  controller: profilesScroll,
+                  itemBuilder: (context, index){
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(0.0),
+                        image: DecorationImage(
+                          image: NetworkImage(user.photos[index]),
+                          fit: BoxFit.cover,
+                        ),
+                        color: Colors.grey[100]
+                      ),
+                    );
+                  },
+                ),
               ),
+
+              Container(
+                padding: EdgeInsets.all(0.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SmoothPageIndicator(
+                      controller: profilesScroll,
+                      count: user.photos.length,
+                      effect: SlideEffect(
+                          spacing:  5.0,
+                          radius:  10.0,
+                          dotWidth:  30.0,
+                          dotHeight:  2.5,
+                          paintStyle:  PaintingStyle.fill,
+                          strokeWidth:  0.0,
+                          dotColor:  Colors.grey[400],
+                          activeDotColor:  Colors.pinkAccent
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(user.fullName, style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
+                    ),
+
+                    SizedBox(
+                      height: 10.0,
+                    ),
+
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text('bio', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.grey[400]),),
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(user.bio, style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 1.0),),
+                    ),
+
+                    SizedBox(
+                      height: 10.0,
+                    ),
+
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text('email', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.grey[400]),),
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(user.email, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400, letterSpacing: 1.0),),
+                    ),
+                  ],
+                ),
+              ),
+
+              Divider(),
+
+              ListTile(
+                title: Text('Edit Profile', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
+                leading: Icon(Icons.edit, color: Colors.grey[800],),
+                onTap: (){
+                  print('Profile Edit');
+                },
+              ),
+
+              Spacer(),
+
+              ListTile(
+                title: Text('LogOut', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
+                leading: Icon(Icons.logout, color: Colors.grey[800],),
+                onTap: (){
+                  _authService.signOut();
+                  Provider.of<Registration>(context, listen: false).setUserIn(0);
+                },
+              ),
+
+
             ],
           ),
         ),
+      ) :
+      Center(
+        child: CircularProgressIndicator(),
       ),
       appBar: AppBar(
         elevation: 0.0,
@@ -67,20 +198,29 @@ class _MainHomeState extends State<MainHome> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: SvgPicture.asset(
-          dotsMenu,
-          width: 25.0,
-          height: 25.0,
-          color: Colors.white
+      floatingActionButton: Container(
+        height: 45.0,
+        width: 45.0,
+        child: FloatingActionButton(
+          elevation: 0.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12.0),),
+          ),
+          child: SvgPicture.asset(
+            dotsMenu,
+            width: 25.0,
+            height: 25.0,
+            color: Colors.white
+          ),
+          backgroundColor: Color(0xFFD12043),
+          onPressed: (){
+            print('Menu Clicked');
+          },
         ),
-        backgroundColor: Color(0xFFD12043),
-        onPressed: (){
-          print('Menu Clicked');
-        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
+        elevation: 0.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -98,7 +238,7 @@ class _MainHomeState extends State<MainHome> {
                 notSelectedIcons[1],
                 width: 25.0,
                 height: 25.0,
-                color: Color(0xFFD12043),
+                color: Colors.grey[400],
               ),
             ),
             SizedBox(width: 40.0,),
@@ -107,7 +247,7 @@ class _MainHomeState extends State<MainHome> {
                 notSelectedIcons[2],
                 width: 25.0,
                 height: 25.0,
-                color: Color(0xFFD12043),
+                color: Colors.grey[400],
               ),
             ),
             IconButton(
@@ -115,7 +255,7 @@ class _MainHomeState extends State<MainHome> {
                 notSelectedIcons[3],
                 width: 25.0,
                 height: 25.0,
-                color: Color(0xFFD12043),
+                color: Colors.grey[400],
               ),
             ),
           ],
@@ -125,12 +265,14 @@ class _MainHomeState extends State<MainHome> {
         color: Colors.white,
       ),
       body: PageView.builder(
-        itemCount: 5,
+        itemCount: 10,
+        physics: NeverScrollableScrollPhysics(),
+        controller: Provider.of<MainHomeState>(context).getMainHomePageController,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index){
           return Container(
             width: MediaQuery.of(context).size.width,
-            child: SingleUserView(),
+            child: SingleUserView(userModel: null,),
           );
         },
       ),
