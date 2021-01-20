@@ -16,6 +16,15 @@
    <application
         android:label="Tebesa"
         android:icon="@mipmap/ic_launcher">
+
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_icon"
+           android:resource="@mipmap/tebesa_notification_icon" />
+
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_color"
+           android:resource="@android:color/black" />
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

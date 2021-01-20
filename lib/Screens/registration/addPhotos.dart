@@ -155,12 +155,9 @@ class _AddPhotosState extends State<AddPhotos> {
                       List<String> pics = [];
                       pics = await uploadUserPictures();
 
-                      print('**** Values *** $pics');
                       Provider.of<RegistrationDataState>(context, listen: false).AddPageThreeData(pics);
 
                       UserModel user = Provider.of<RegistrationDataState>(context, listen: false).getRegistrationData;
-
-                      print('**** Photos *** ${user.photos}');
 
                       String uid = FirebaseAuth.instance.currentUser.uid.toString();
 
@@ -171,7 +168,7 @@ class _AddPhotosState extends State<AddPhotos> {
                       });
 
                       Provider.of<Registration>(context, listen: false).setUserIn(1);
-//                      Provider.of<RegistrationState>(context, listen: false).setRegistrationPage(0);
+                      Provider.of<RegistrationState>(context, listen: false).setRegistrationPage(0);
                     }else{
                       print('Add Pictures First');
                     }

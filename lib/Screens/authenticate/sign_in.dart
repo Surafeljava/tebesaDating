@@ -246,6 +246,17 @@ class _SignInState extends State<SignIn> {
               ),
             ),
 
+            Spacer(),
+
+            Center(
+              child: FlatButton(
+                child: Text('Anon Sign-In', style: TextStyle(color: Colors.grey[700], letterSpacing: 1.0, fontSize: 20.0, fontWeight: FontWeight.w400),),
+                onPressed: () async{
+                  await _authService.signInAnon();
+                },
+              ),
+            ),
+
           ],
         ),
       ),
@@ -255,10 +266,6 @@ class _SignInState extends State<SignIn> {
 
   //Phone Verification
   Future<void> verifyPhone() async {
-
-    print('********************* Verifying the phone *******************');
-    print('********************* ${phoneController.text} *******************');
-    print('********************* $_phone *******************');
 
     final PhoneVerificationCompleted verified = (AuthCredential authResult) {
       print('************ SIGNIN Function ************');

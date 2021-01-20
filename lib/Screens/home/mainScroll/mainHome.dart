@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dating/Models/userAuthModel.dart' as  usr;
 import 'package:dating/Models/userModel.dart';
+import 'package:dating/Screens/home/mainScroll/home.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:dating/Screens/home/mainScroll/singleUserView.dart';
+import 'package:dating/Screens/messaging/mainMessagingPage.dart';
 import 'package:dating/Screens/registration/registration.dart';
 import 'package:dating/Services/authService.dart';
 import 'package:dating/Services/databaseService.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,12 +32,16 @@ class _MainHomeState extends State<MainHome> {
   List<String> notSelectedIcons = ['assets/icons/navigation/home-line.svg', 'assets/icons/navigation/heart-line.svg', 'assets/icons/navigation/tinder-line.svg', 'assets/icons/navigation/message-line.svg'];
   String dotsMenu = 'assets/icons/navigation/dots-menu.svg';
 
+  int selectedPage = 0;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   UserModel user;
   bool userDataCollected = false;
 
   PageController profilesScroll = new PageController();
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
@@ -48,6 +55,9 @@ class _MainHomeState extends State<MainHome> {
         userDataCollected = true;
       });
     });
+
+    _firebaseMessaging.subscribeToTopic('all');
+
   }
 
   @override
@@ -154,6 +164,15 @@ class _MainHomeState extends State<MainHome> {
                 },
               ),
 
+              ListTile(
+                title: Text('Payment', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
+                subtitle: Text('2 Months Left', style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.redAccent),),
+                leading: Icon(Icons.attach_money, color: Colors.grey[800],),
+                onTap: (){
+                  print('Payment Page');
+                },
+              ),
+
               Spacer(),
 
               ListTile(
@@ -187,13 +206,13 @@ class _MainHomeState extends State<MainHome> {
             _scaffoldKey.currentState.openDrawer();
           },
         ),
+        title: Text('Tebesa', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout, color: Colors.grey[800],),
+            icon: Icon(Icons.more_vert, color: Colors.grey[800],),
             color: Colors.white,
             onPressed: (){
-              _authService.signOut();
-              Provider.of<Registration>(context, listen: false).setUserIn(0);
+              print('More');
             },
           ),
         ],
@@ -214,7 +233,9 @@ class _MainHomeState extends State<MainHome> {
           ),
           backgroundColor: Color(0xFFD12043),
           onPressed: (){
-            print('Menu Clicked');
+            setState(() {
+              selectedPage = 4;
+            });
           },
         ),
       ),
@@ -227,36 +248,56 @@ class _MainHomeState extends State<MainHome> {
 
             IconButton(
               icon: SvgPicture.asset(
-                selectedIcons[0],
+                selectedPage==0 ? selectedIcons[0] : notSelectedIcons[0],
                 width: 25.0,
                 height: 25.0,
-                color: Color(0xFFD12043),
+                color: selectedPage==0 ? Color(0xFFD12043) : Colors.grey[400],
               ),
+              onPressed: (){
+                setState(() {
+                  selectedPage = 0;
+                });
+              },
             ),
             IconButton(
               icon: SvgPicture.asset(
-                notSelectedIcons[1],
+                selectedPage==1 ? selectedIcons[1] : notSelectedIcons[1],
                 width: 25.0,
                 height: 25.0,
-                color: Colors.grey[400],
+                color: selectedPage==1 ? Color(0xFFD12043) : Colors.grey[400],
               ),
+              onPressed: (){
+                setState(() {
+                  selectedPage = 1;
+                });
+              },
             ),
             SizedBox(width: 40.0,),
             IconButton(
               icon: SvgPicture.asset(
-                notSelectedIcons[2],
+                selectedPage==2 ? selectedIcons[2] : notSelectedIcons[2],
                 width: 25.0,
                 height: 25.0,
-                color: Colors.grey[400],
+                color: selectedPage==2 ? Color(0xFFD12043) : Colors.grey[400],
               ),
+              onPressed: (){
+                setState(() {
+                  selectedPage = 2;
+                });
+              },
             ),
             IconButton(
               icon: SvgPicture.asset(
-                notSelectedIcons[3],
+                selectedPage==3 ? selectedIcons[3] : notSelectedIcons[3],
                 width: 25.0,
                 height: 25.0,
-                color: Colors.grey[400],
+                color: selectedPage==3 ? Color(0xFFD12043) : Colors.grey[400],
               ),
+              onPressed: (){
+                setState(() {
+                  selectedPage = 3;
+                });
+              },
             ),
           ],
 
@@ -264,18 +305,27 @@ class _MainHomeState extends State<MainHome> {
         shape: CircularNotchedRectangle(),
         color: Colors.white,
       ),
-      body: PageView.builder(
-        itemCount: 10,
-        physics: NeverScrollableScrollPhysics(),
-        controller: Provider.of<MainHomeState>(context).getMainHomePageController,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index){
-          return Container(
-            width: MediaQuery.of(context).size.width,
-            child: SingleUserView(userModel: null,),
-          );
-        },
-      ),
+      body: currentPage(selectedPage),
     );
+  }
+
+  Widget currentPage(int selected){
+    if(selected==0){
+      return Home(theContext: context,);
+    }else if(selected==1){
+      return Center(
+        child: Text('Likes Page ( Under Construction! )'),
+      );
+    }else if(selected==2){
+      return Center(
+        child: Text('Matches Page ( Under Construction! )'),
+      );
+    }else if(selected==3){
+      return MainMessagingPage();
+    }else {
+      return Center(
+        child: Text('Top Picks Page ( Under Construction! )'),
+      );
+    }
   }
 }

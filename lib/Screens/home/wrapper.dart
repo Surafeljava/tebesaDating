@@ -43,9 +43,9 @@ class _WrapperState extends State<Wrapper> {
         });
       });
 
-      if(a==1 || registeredBefore && checkingUser){
+      if((a==1 || registeredBefore) && checkingUser){
         return MainHome();
-      }else if(a!=1 || registeredBefore && !checkingUser){
+      }else if((a!=1 || registeredBefore) && !checkingUser){
         return LoginCheckLoading();
       }else{
         return RegistrationPage();

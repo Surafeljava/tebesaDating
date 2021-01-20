@@ -1,3 +1,4 @@
+import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,7 +6,7 @@ import 'package:spring_button/spring_button.dart';
 
 class SingleUserView extends StatefulWidget {
 
-  @required final userModel;
+  @required final UserModel userModel;
   SingleUserView({this.userModel});
 
   @override
@@ -13,8 +14,6 @@ class SingleUserView extends StatefulWidget {
 }
 
 class _SingleUserViewState extends State<SingleUserView> {
-
-  List<String> pics = ['assets/test/user1.jpg','assets/test/user2.jpg','assets/test/user3.jpg','assets/test/user4.jpg','assets/test/user5.jpg'];
 
   int selectedPic = 0;
 
@@ -35,7 +34,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(20.0),
                 image: DecorationImage(
-                  image: AssetImage(pics[selectedPic]),
+                  image: NetworkImage(widget.userModel.photos[selectedPic]),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -46,21 +45,29 @@ class _SingleUserViewState extends State<SingleUserView> {
             Container(
               height: 65,
               child: ListView.builder(
-                itemCount: pics.length,
+                itemCount: widget.userModel.photos.length,
                 scrollDirection: Axis.horizontal,
+                physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index){
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Container(
-                      width: 65,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(10.0),
-                        image: DecorationImage(
-                          image: AssetImage(pics[index]),
-                          fit: BoxFit.cover,
+                    child: GestureDetector(
+                      child: Container(
+                        width: 65,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(10.0),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.userModel.photos[index]),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
+                      onTap: (){
+                        setState(() {
+                          selectedPic = index;
+                        });
+                      },
                     ),
                   );
                 },
@@ -74,7 +81,7 @@ class _SingleUserViewState extends State<SingleUserView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Amelia Jonson', style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.w400),),
+                  Text(widget.userModel.fullName, style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.w400),),
                   Icon(Icons.keyboard_arrow_down, size: 30.0, color: Color(0xFFD12043),)
                 ],
               ),
