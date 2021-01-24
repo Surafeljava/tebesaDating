@@ -1,6 +1,8 @@
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/datesState.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
+import 'package:dating/Screens/home/mainScroll/matchState.dart';
+import 'package:dating/Screens/home/mainScroll/matchView.dart';
 import 'package:dating/Screens/home/mainScroll/singleUserView.dart';
 import 'package:dating/Services/databaseService.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,8 @@ class _HomeState extends State<Home> {
 
   bool loading = true;
 
+  UserModel me;
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +32,12 @@ class _HomeState extends State<Home> {
     _databaseService.getNewDates(widget.theContext).then((value) {
       setState(() {
         loading = false;
+      });
+    });
+
+    _databaseService.getMyInfo().then((value) {
+      setState(() {
+        me = value;
       });
     });
   }
@@ -38,7 +48,7 @@ class _HomeState extends State<Home> {
     Center(
       child: CircularProgressIndicator(),
     ) :
-    Provider.of<DatesState>(context).getMyDates.length==0 ?
+    (Provider.of<DatesState>(context).getMyDates.length==Provider.of<MainHomeState>(context).getPage || Provider.of<DatesState>(context).getMyDates.length==0 ) && !Provider.of<MatchState>(context).getMatchState ?
     Container(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -50,17 +60,11 @@ class _HomeState extends State<Home> {
         ],
       ),
     ) :
-    PageView.builder(
-      itemCount: Provider.of<DatesState>(context).getMyDates.length,
-      physics: NeverScrollableScrollPhysics(),
-      controller: Provider.of<MainHomeState>(context).getMainHomePageController,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index){
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          child: SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[index],),
-        );
-      },
+    Container(
+      width: MediaQuery.of(context).size.width,
+      child: Provider.of<MatchState>(context).getMatchState ?
+      MatchView(otherUser: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage-1], me: me) :
+      SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage],),
     );
   }
 }

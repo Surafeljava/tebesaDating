@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 
-///For the main message model
 class MessageModel{
 
   String message;
@@ -9,7 +9,14 @@ class MessageModel{
   String messageId;
   String type;
 
-  MessageModel({this.message, this.from, this.replyTo, this.time, this.messageId, this.type});
+  MessageModel({
+    @required this.message,
+    @required this.from,
+    @required this.replyTo,
+    @required this.time,
+    @required this.messageId,
+    @required this.type,
+  });
 
   factory MessageModel.fromJson(dynamic json){
     return MessageModel(
@@ -59,6 +66,52 @@ class LastMessageModel{
         'from': from,
         'read': read,
         'time': time
+      };
+
+}
+
+
+class ConversationModel{
+
+  String conversationId;
+  LastMessageModel lastMessage;
+  int messageCount;
+  int unreadMessage;
+  String woman;
+  String man;
+  DateTime lastUpdate;
+
+  ConversationModel({
+    @required this.conversationId,
+    @required this.lastMessage,
+    @required this.messageCount,
+    @required this.unreadMessage,
+    @required this.woman,
+    @required this.man,
+    @required this.lastUpdate,
+  });
+
+  factory ConversationModel.fromJson(dynamic json){
+    return ConversationModel(
+      conversationId: json['conversationId'],
+      lastMessage: LastMessageModel.fromJson(json['lastMessage']),
+      messageCount: json['messageCount'],
+      unreadMessage: json['unreadMessage'],
+      woman: json['woman'],
+      man: json['woman'],
+      lastUpdate: DateTime.fromMicrosecondsSinceEpoch(json['lastUpdate'].microsecondsSinceEpoch),
+    );
+  }
+
+  Map<String, dynamic> toJson() =>
+      {
+        'conversationId': conversationId,
+        'lastMessage': lastMessage.toJson(),
+        'messageCount': messageCount,
+        'unreadMessage': unreadMessage,
+        'woman': woman,
+        'man': man,
+        'lastUpdate': lastUpdate
       };
 
 }

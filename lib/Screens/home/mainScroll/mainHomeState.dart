@@ -12,4 +12,27 @@ class MainHomeState with ChangeNotifier{
     notifyListeners();
   }
 
+
+  int page = 0;
+
+  int get getPage => page;
+
+  void resetPage(){
+    page = 0;
+    notifyListeners();
+  }
+
+  void changePage(bool front){
+    if(front){
+      page += 1;
+    }else{
+      if(page > 0){
+        page -= 1;
+      }else{
+        page = 0;
+      }
+    }
+    notifyListeners();
+  }
+
 }

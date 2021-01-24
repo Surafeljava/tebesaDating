@@ -1,5 +1,8 @@
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
+import 'package:dating/Screens/home/mainScroll/matchState.dart';
+import 'package:dating/Screens/home/mainScroll/matchView.dart';
+import 'package:dating/Services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
@@ -16,6 +19,23 @@ class SingleUserView extends StatefulWidget {
 class _SingleUserViewState extends State<SingleUserView> {
 
   int selectedPic = 0;
+
+  DatabaseService _databaseService = new DatabaseService();
+
+  bool matchPage = false;
+
+  UserModel meModel;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _databaseService.getMyInfo().then((value) {
+      setState(() {
+        meModel = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +133,8 @@ class _SingleUserViewState extends State<SingleUserView> {
                     ),
                   ),
                   useCache: false,
-                  onTap: (){
-                    changePage('Money', this.context);
+                  onTap: () async{
+                    await changePage(0, true , this.context);
                   },
                 ),
 
@@ -139,8 +159,8 @@ class _SingleUserViewState extends State<SingleUserView> {
                     ),
                   ),
                   useCache: false,
-                  onTap: (){
-                    changePage('DisLike', this.context);
+                  onTap: () async{
+                    await changePage(1, true , this.context);
                   },
                 ),
 
@@ -165,8 +185,8 @@ class _SingleUserViewState extends State<SingleUserView> {
                     ),
                   ),
                   useCache: false,
-                  onTap: (){
-                    changePage('Like', this.context);
+                  onTap: () async{
+                    await changePage(2, true ,this.context);
                   },
                 ),
 
@@ -191,8 +211,8 @@ class _SingleUserViewState extends State<SingleUserView> {
                     ),
                   ),
                   useCache: false,
-                  onTap: (){
-                    changePage('Favorite', this.context);
+                  onTap: () async{
+                    await changePage(3 , true, this.context);
                   },
                 ),
 
@@ -206,9 +226,21 @@ class _SingleUserViewState extends State<SingleUserView> {
     );
   }
 
-  void changePage(String from, BuildContext context){
-    Provider.of<MainHomeState>(context, listen: false).changeMainHomePage();
-    print('Page change from: $from');
+  Future<void> changePage(int from ,bool next, BuildContext context) async{
+
+    if(from==1){
+      bool res = await _databaseService.updateOnDisLikes(widget.userModel.uid);
+    }else{
+      bool res = await _databaseService.updateOnLikes(widget.userModel.uid);
+    }
+
+    bool checkIfMatch = await _databaseService.checkIfMatch(widget.userModel.uid);
+
+    Provider.of<MainHomeState>(context, listen: false).changePage(next);
+
+    if(checkIfMatch){
+      Provider.of<MatchState>(context, listen: false).setMatchState(true);
+    }
   }
 
 }

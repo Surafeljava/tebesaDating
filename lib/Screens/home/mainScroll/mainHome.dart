@@ -4,6 +4,8 @@ import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/home.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:dating/Screens/home/mainScroll/singleUserView.dart';
+import 'package:dating/Screens/home/mainScroll/topPicks.dart';
+import 'package:dating/Screens/home/matches/matchesPage.dart';
 import 'package:dating/Screens/messaging/mainMessagingPage.dart';
 import 'package:dating/Screens/registration/registration.dart';
 import 'package:dating/Services/authService.dart';
@@ -43,6 +45,8 @@ class _MainHomeState extends State<MainHome> {
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
+  List<String> pagesName = ['Tebesa', 'Likes', 'Matches', 'Messages', 'Top Picks'];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -54,6 +58,10 @@ class _MainHomeState extends State<MainHome> {
       setState(() {
         userDataCollected = true;
       });
+      _firebaseMessaging.subscribeToTopic('${user.uid}_convo');
+      _firebaseMessaging.subscribeToTopic('${user.uid}_match');
+      _firebaseMessaging.subscribeToTopic('${user.uid}_like');
+      _firebaseMessaging.subscribeToTopic('${user.uid}_payment');
     });
 
     _firebaseMessaging.subscribeToTopic('all');
@@ -206,7 +214,7 @@ class _MainHomeState extends State<MainHome> {
             _scaffoldKey.currentState.openDrawer();
           },
         ),
-        title: Text('Tebesa', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
+        title: Text(pagesName[selectedPage], style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
         actions: [
           IconButton(
             icon: Icon(Icons.more_vert, color: Colors.grey[800],),
@@ -317,14 +325,12 @@ class _MainHomeState extends State<MainHome> {
         child: Text('Likes Page ( Under Construction! )'),
       );
     }else if(selected==2){
-      return Center(
-        child: Text('Matches Page ( Under Construction! )'),
-      );
+      return MatchesPage();
     }else if(selected==3){
       return MainMessagingPage();
     }else {
       return Center(
-        child: Text('Top Picks Page ( Under Construction! )'),
+        child: TopPicks(),
       );
     }
   }

@@ -1,6 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dating/Screens/messaging/messagesDisplay.dart';
+import 'package:dating/Services/authService.dart';
+import 'package:dating/Services/databaseService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MessagePage extends StatefulWidget {
+
+  final String convoRef;
+  final String fullName;
+  final String url;
+  final String lastSeenTime;
+
+
+  MessagePage({
+    @required this.convoRef,
+    @required this.fullName,
+    @required this.url,
+    @required this.lastSeenTime
+  });
+
   @override
   _MessagePageState createState() => _MessagePageState();
 }
@@ -9,6 +28,8 @@ class _MessagePageState extends State<MessagePage> {
 
   TextEditingController _messageTextController = new TextEditingController();
   String message = '';
+
+  DatabaseService _databaseService = new DatabaseService();
 
   @override
   void initState() {
@@ -32,7 +53,7 @@ class _MessagePageState extends State<MessagePage> {
           children: [
             CircleAvatar(
               child: Container(),
-              backgroundImage: AssetImage('assets/test/user1.jpg'),
+              backgroundImage: NetworkImage(widget.url),
             ),
             SizedBox(width: 10.0,),
             Container(
@@ -40,8 +61,8 @@ class _MessagePageState extends State<MessagePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('User Name', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 0.6,), overflow: TextOverflow.ellipsis,),
-                  Text('8:42 PM', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400, color: Colors.grey[600], letterSpacing: 0.3), overflow: TextOverflow.ellipsis,),
+                  Text(widget.fullName, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 0.6,), overflow: TextOverflow.ellipsis,),
+                  Text(widget.lastSeenTime, style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400, color: Colors.grey[600], letterSpacing: 0.3), overflow: TextOverflow.ellipsis,),
                 ],
               ),
             ),
@@ -63,9 +84,11 @@ class _MessagePageState extends State<MessagePage> {
         child: Column(
           children: [
             Expanded(
-              child: Container(
-                padding: EdgeInsets.all(10.0),
-
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance.doc(widget.convoRef).collection('conversation').orderBy('time', descending: true).snapshots(),
+                builder: (context, snapshot) {
+                  return MessagesDisplay(snapshot: snapshot,);
+                }
               ),
             ),
 
@@ -82,11 +105,18 @@ class _MessagePageState extends State<MessagePage> {
                   icon: Icon(Icons.send, color: message.length == 0 ? Colors.grey[600] : Colors.blue,),
                   onPressed: () async{
                     if(message!='') {
+                      //Remove the focus of the keyboard
                       FocusScope.of(context).unfocus();
 
                       String msg = message;
 
-//                      await MessagingService.sendToTopic(title: (me.firstName + ' ' + me.lastName), body: msg, topic: widget.documentSnapshot['conversationId']);
+                      setState(() {
+                        _messageTextController.text = '';
+                        message = '';
+                      });
+
+                      //Send the message
+                      await _databaseService.sendMessage(msg, '', 'text', widget.convoRef);
                     }
                     else{
                       print('Write Something First');

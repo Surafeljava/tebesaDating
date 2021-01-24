@@ -2,6 +2,7 @@ import 'package:dating/Screens/Home/wrapper.dart';
 import 'package:dating/Screens/authenticate/AuthState.dart';
 import 'package:dating/Screens/home/mainScroll/datesState.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
+import 'package:dating/Screens/home/mainScroll/matchState.dart';
 import 'package:dating/Screens/registration/RegistrationState.dart';
 import 'package:dating/Screens/registration/registration.dart';
 import 'package:dating/Screens/registration/registrationDataState.dart';
@@ -47,6 +48,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (context) => DatesState(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => MatchState(),
         ),
       ],
       child: MaterialApp(
