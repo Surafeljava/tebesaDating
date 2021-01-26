@@ -76,6 +76,17 @@ class DatabaseService with ChangeNotifier{
 
   }
 
+
+  //Get my last seen dates
+  Future<List<dynamic>> getMyLastSeenDates() async{
+    List<dynamic> lastSeenDatesList = [];
+    String uid = FirebaseAuth.instance.currentUser.uid.toString();
+    var result1 = await firestoreInstance.collection('users').doc(uid).get();
+    lastSeenDatesList = result1['lastSeen'];
+
+    return lastSeenDatesList;
+  }
+
   //For MainMessagingPage and Deleting Account
   Future<List<dynamic>> getMyMessagesList() async{
     String _uid = FirebaseAuth.instance.currentUser.uid.toString();
@@ -142,7 +153,7 @@ class DatabaseService with ChangeNotifier{
 
     //Get other user model
     var result2 = await firestoreInstance.doc(otherReference).get();
-    final UserModel otherModel = UserModel.fromJson(result);
+    final UserModel otherModel = UserModel.fromJson(result2);
 
     //Create the conversation
     bool convoCreate = await createConversation(myModel, otherModel);

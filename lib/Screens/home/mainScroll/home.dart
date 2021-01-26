@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
       width: MediaQuery.of(context).size.width,
       child: Provider.of<MatchState>(context).getMatchState ?
       MatchView(otherUser: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage-1], me: me) :
-      SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage],),
+      SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage], fromHome: true,),
     );
   }
 }

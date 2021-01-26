@@ -10,7 +10,8 @@ import 'package:spring_button/spring_button.dart';
 class SingleUserView extends StatefulWidget {
 
   @required final UserModel userModel;
-  SingleUserView({this.userModel});
+  @required final bool fromHome;
+  SingleUserView({this.userModel, this.fromHome});
 
   @override
   _SingleUserViewState createState() => _SingleUserViewState();
@@ -26,6 +27,8 @@ class _SingleUserViewState extends State<SingleUserView> {
 
   UserModel meModel;
 
+  List<dynamic> lastSeenUsers = [];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -35,6 +38,20 @@ class _SingleUserViewState extends State<SingleUserView> {
         meModel = value;
       });
     });
+    _databaseService.getMyLastSeenDates().then((value) {
+      setState(() {
+        lastSeenUsers = value;
+      });
+    });
+  }
+
+  bool checkIfInList(String uid){
+    for(dynamic user in lastSeenUsers){
+      if(user.toString()==uid){
+        return true;
+      }
+    }
+    return false;
   }
 
   @override
@@ -134,7 +151,12 @@ class _SingleUserViewState extends State<SingleUserView> {
                   ),
                   useCache: false,
                   onTap: () async{
-                    await changePage(0, true , this.context);
+                    if(checkIfInList(widget.userModel.uid)){
+                      print('Do Nothing');
+                      Navigator.of(context).pop();
+                    }else{
+                      await changePage(0, true ,this.context);
+                    }
                   },
                 ),
 
@@ -160,7 +182,12 @@ class _SingleUserViewState extends State<SingleUserView> {
                   ),
                   useCache: false,
                   onTap: () async{
-                    await changePage(1, true , this.context);
+                    if(checkIfInList(widget.userModel.uid)){
+                      print('Do Nothing');
+                      Navigator.of(context).pop();
+                    }else{
+                      await changePage(1, true ,this.context);
+                    }
                   },
                 ),
 
@@ -186,7 +213,12 @@ class _SingleUserViewState extends State<SingleUserView> {
                   ),
                   useCache: false,
                   onTap: () async{
-                    await changePage(2, true ,this.context);
+                    if(checkIfInList(widget.userModel.uid)){
+                      print('Do Nothing');
+                      Navigator.of(context).pop();
+                    }else{
+                      await changePage(2, true ,this.context);
+                    }
                   },
                 ),
 
@@ -212,7 +244,12 @@ class _SingleUserViewState extends State<SingleUserView> {
                   ),
                   useCache: false,
                   onTap: () async{
-                    await changePage(3 , true, this.context);
+                    if(checkIfInList(widget.userModel.uid)){
+                      print('Do Nothing');
+                      Navigator.of(context).pop();
+                    }else{
+                      await changePage(3 , true, this.context);
+                    }
                   },
                 ),
 
@@ -236,11 +273,20 @@ class _SingleUserViewState extends State<SingleUserView> {
 
     bool checkIfMatch = await _databaseService.checkIfMatch(widget.userModel.uid);
 
-    Provider.of<MainHomeState>(context, listen: false).changePage(next);
+    if(widget.fromHome){
+      Provider.of<MainHomeState>(context, listen: false).changePage(next);
+      if(checkIfMatch){
+        Provider.of<MatchState>(context, listen: false).setMatchState(true);
+      }
+    }else{
+      if(checkIfMatch){
+        Provider.of<MatchState>(context, listen: false).setMatchState(true);
+      }
 
-    if(checkIfMatch){
-      Provider.of<MatchState>(context, listen: false).setMatchState(true);
+      Navigator.of(context).pop();
     }
+
+
   }
 
 }

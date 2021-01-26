@@ -15,10 +15,10 @@ class _TopPicksState extends State<TopPicks> {
         child: GridView.builder(
           physics: BouncingScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisSpacing: 15.0,
+              mainAxisSpacing: 10.0,
               crossAxisSpacing: 15.0,
               crossAxisCount: 2,
-              childAspectRatio: 0.9
+              childAspectRatio: 0.8
           ),
           itemBuilder: (_, index) {
             return TopPicksItem();

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dating/Models/userAuthModel.dart' as  usr;
 import 'package:dating/Models/userModel.dart';
+import 'package:dating/Screens/home/likes/likesPage.dart';
 import 'package:dating/Screens/home/mainScroll/home.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:dating/Screens/home/mainScroll/singleUserView.dart';
@@ -322,7 +323,7 @@ class _MainHomeState extends State<MainHome> {
       return Home(theContext: context,);
     }else if(selected==1){
       return Center(
-        child: Text('Likes Page ( Under Construction! )'),
+        child: LikesPage(),
       );
     }else if(selected==2){
       return MatchesPage();
