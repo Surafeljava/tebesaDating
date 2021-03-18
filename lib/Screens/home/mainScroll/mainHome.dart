@@ -1,21 +1,25 @@
+
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dating/Models/userAuthModel.dart' as  usr;
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/likes/likesPage.dart';
 import 'package:dating/Screens/home/mainScroll/home.dart';
-import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
-import 'package:dating/Screens/home/mainScroll/singleUserView.dart';
+import 'package:dating/Screens/home/mainScroll/notifyAnimations.dart';
 import 'package:dating/Screens/home/mainScroll/topPicks.dart';
 import 'package:dating/Screens/home/matches/matchesPage.dart';
+import 'package:dating/Screens/home/options/editProfile.dart';
 import 'package:dating/Screens/messaging/mainMessagingPage.dart';
 import 'package:dating/Screens/registration/registration.dart';
 import 'package:dating/Services/authService.dart';
 import 'package:dating/Services/databaseService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class MainHome extends StatefulWidget {
@@ -48,6 +52,10 @@ class _MainHomeState extends State<MainHome> {
 
   List<String> pagesName = ['Tebesa', 'Likes', 'Matches', 'Messages', 'Top Picks'];
 
+  bool showLikesAnimation = false;
+
+  int likesNumber = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -67,6 +75,44 @@ class _MainHomeState extends State<MainHome> {
 
     _firebaseMessaging.subscribeToTopic('all');
 
+    getMySeenLikes().then((value) {
+      setState(() {
+        likesNumber = value;
+      });
+    });
+
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      _databaseService.getMyLikes().then((value) {
+        if(likesNumber < value.length){
+          setState(() {
+            showLikesAnimation = true;
+            likesNumber = value.length;
+            //add to shared preference
+            addMySeenLikes(value.length);
+          });
+        }else{
+          setState(() {
+            showLikesAnimation = false;
+          });
+        }
+      });
+
+    });
+
+  }
+
+  //get my seen likes number from shared preference
+  Future<int> getMySeenLikes() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int likes = (prefs.getInt('likesCount') ?? 0);
+    return likes;
+  }
+
+  //change the seen likes number
+  void addMySeenLikes(int a) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int likes = (prefs.getInt('likesCount') ?? 0) + a;
+    await prefs.setInt('likesCount', likes);
   }
 
   @override
@@ -169,7 +215,8 @@ class _MainHomeState extends State<MainHome> {
                 title: Text('Edit Profile', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
                 leading: Icon(Icons.edit, color: Colors.grey[800],),
                 onTap: (){
-                  print('Profile Edit');
+                  //Call profile edit page
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditProfile()));
                 },
               ),
 
@@ -319,8 +366,15 @@ class _MainHomeState extends State<MainHome> {
   }
 
   Widget currentPage(int selected){
+
     if(selected==0){
-      return Home(theContext: context,);
+      return Stack(
+        children: [
+          Home(theContext: context,),
+          //Todo: add the animation here
+          showLikesAnimation ? NotifyAnimations(animationType: 0,) : Container(),
+        ],
+      );
     }else if(selected==1){
       return Center(
         child: LikesPage(),
@@ -335,4 +389,5 @@ class _MainHomeState extends State<MainHome> {
       );
     }
   }
+
 }

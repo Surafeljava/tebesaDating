@@ -49,6 +49,9 @@ dependencies:
   cached_network_image: ^2.5.0
   intl: ^0.16.1
   shimmer: ^1.1.2
+  network_to_file_image: ^2.3.8
+  lottie: ^0.7.0+1
+  mailer:
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +77,7 @@ flutter:
     - assets/logo/
     - assets/icons/navigation/
     - assets/test/
+    - assets/banks/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

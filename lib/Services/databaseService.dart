@@ -1,21 +1,27 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dating/Models/likesModel.dart';
 import 'package:dating/Models/messageModels.dart';
+import 'package:dating/Models/paymentModel.dart';
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/datesState.dart';
 import 'package:dating/Services/messagingService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fbStore;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:provider/provider.dart';
+
+import 'package:mailer/mailer.dart';
 
 class DatabaseService with ChangeNotifier{
 
   final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
 
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
+  final CollectionReference paymentCollection = FirebaseFirestore.instance.collection('paymentRequests');
   final CollectionReference conversationCollection = FirebaseFirestore.instance.collection('conversations');
 
   final MessagingService _messagingService = new MessagingService();
@@ -36,38 +42,141 @@ class DatabaseService with ChangeNotifier{
 
   }
 
+  ///Create new user account by adding the registration information to the database
   Future<void> addNewUser(UserModel _userModel, String _uid) async {
     await userCollection.doc(_uid).set(_userModel.toJson());
     await addNewUserAdditionalData();
   }
 
+  Future<void> updateUserInfo(String email, String fullName, String bDate, String bio) async{
+    String uid = FirebaseAuth.instance.currentUser.uid.toString();
+    await userCollection.doc(uid).update({'email': email, 'fullName': fullName, 'bDate': bDate, 'bio': bio});
+  }
+
+  ///Add users additional information like: last seen, messages, likes and matches
   Future<void> addNewUserAdditionalData() async{
     String uid = FirebaseAuth.instance.currentUser.uid.toString();
     await userCollection.doc(uid).update({'lastSeen':[], 'messages':[], 'likes':[], 'matches':[]});
   }
 
+  ///Get my information
   Future<UserModel> getMyInfo() async{
     String _uid = FirebaseAuth.instance.currentUser.uid.toString();
     var result = await firestoreInstance.collection('users').doc(_uid).get();
     return UserModel.fromJson(result);
   }
 
+
+  ///Get my payment info
+  Future<PaymentModel> getMyPaymentInfo() async{
+    String _uid = FirebaseAuth.instance.currentUser.uid.toString();
+    var result = await firestoreInstance.collection('paymentRequests').doc(_uid).get();
+    return PaymentModel.fromJson(result);
+  }
+
+
+  ///Send new payment request created email
+  Future<void> sendNewRequestEmail(PaymentModel paymentModel) async{
+    String username = 'tikusevents.info@gmail.com';
+    String password = 'm^5Xg<AkZ(bH7)D}';
+
+    Map<String, String> banks = {"CBE":"1000145305717", "Hibret Bank":"1000145305717", "Dashen Bank":"1000145305717", "Wegagen Bank":"1000145305717"};
+
+    final smtpServer = gmail(username, password);
+
+    // Create our message.
+    final message = Message()
+      ..from = Address(username, 'Tebesa Dating')
+      ..recipients.add(paymentModel.email)
+      ..subject = 'Tebesa Payment Request'
+      ..html = "<h1>Payment Invoice</h1>\n<p>Invoice Number: ${paymentModel.invoice}</p>"
+          "<p>Request Date: <Strong>${paymentModel.date.day}/${paymentModel.date.month}/${paymentModel.date.year}</Strong></p>"
+          "<p>Package Months: <Strong>${paymentModel.packageMonth} months</Strong></p>"
+          "<p>Bank: <Strong>${paymentModel.bank}</Strong></p>"
+          "<p>Account Number: <Strong>${banks["${paymentModel.bank}"]}</Strong></p>";
+
+    try {
+      final sendReport = await send(message, smtpServer);
+      print('Message sent: ' + sendReport.toString());
+    } on MailerException catch (e) {
+      print('Message not sent.');
+      for (var p in e.problems) {
+        print('Problem: ${p.code}: ${p.msg}');
+      }
+    }
+
+  }
+
+  ///Create new payment
+  Future<void> createNewPayment(PaymentModel paymentModel) async{
+    String _uid = FirebaseAuth.instance.currentUser.uid.toString();
+    print(paymentModel.toJson());
+    await paymentCollection.doc(_uid).set(paymentModel.toJson());
+    await sendNewRequestEmail(paymentModel);
+  }
+
+
+  ///Update payment status * adding confirmation number *
+  Future<void> updatePayment(String confirmationNumber) async{
+    String _uid = FirebaseAuth.instance.currentUser.uid.toString();
+    await paymentCollection.doc(_uid).update({'confirmationNumber': confirmationNumber, 'confirmed': true});
+  }
+
+
+  ///Get All my photos
+  Future<List<dynamic>> getMyPhotos() async{
+    String _uid = FirebaseAuth.instance.currentUser.uid.toString();
+    var result = await firestoreInstance.collection('users').doc(_uid).get();
+    UserModel me = UserModel.fromJson(result);
+    return me.photos;
+  }
+
+  ///Upload one photo
+  Future<String> uploadOnePhoto(File image, String name) async {
+    fbStore.Reference ref = fbStore.FirebaseStorage.instance.ref('userImages/$name');
+    fbStore.TaskSnapshot uploadTask = await ref.putFile(image);
+
+    final String downloadUrl = await uploadTask.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+  ///Update photos
+  Future<void> updatePhotos(List<dynamic> photosList) async{
+    String _uid = FirebaseAuth.instance.currentUser.uid.toString();
+    await firestoreInstance.collection('users').doc(_uid).update({'photos': photosList});
+  }
+
+  ///Get my likes
+  Future<List<dynamic>> getMyLikes()async{
+    String _uid = FirebaseAuth.instance.currentUser.uid.toString();
+    var result = await firestoreInstance.collection('users').doc(_uid).get();
+    return result['likes'];
+  }
+
+  ///Update the dates list
   Future<void> getNewDates(BuildContext context) async{
 
     List<UserModel> myDates = [];
+    List<UserModel> myLastSeenDates = [];
     List<dynamic> lastSeenDatesList = [];
 
     UserModel me = await getMyInfo();
-    //TODO finish this function
-    String genderToFind = me.gender=='Male' ? 'Female' : 'Male';
+
+//    String genderToFind = me.gender=='Male' ? 'Female' : 'Male';
 
     var result1 = await firestoreInstance.collection('users').doc(me.uid).get();
     lastSeenDatesList = result1['lastSeen'];
 
-    var result = await firestoreInstance.collection('users').where('gender', isEqualTo: genderToFind).get();
+    var result = await firestoreInstance.collection('users').where('gender', isEqualTo: me.interest).get();
 
     result.docs.forEach((element) {
       if(!lastSeenDatesList.contains(UserModel.fromJson(element).uid)){
+        myDates.add(UserModel.fromJson(element));
+      }
+    });
+
+    result.docs.forEach((element) {
+      if(lastSeenDatesList.contains(UserModel.fromJson(element).uid)){
         myDates.add(UserModel.fromJson(element));
       }
     });
@@ -77,7 +186,7 @@ class DatabaseService with ChangeNotifier{
   }
 
 
-  //Get my last seen dates
+  ///Get my last seen dates
   Future<List<dynamic>> getMyLastSeenDates() async{
     List<dynamic> lastSeenDatesList = [];
     String uid = FirebaseAuth.instance.currentUser.uid.toString();
@@ -87,20 +196,21 @@ class DatabaseService with ChangeNotifier{
     return lastSeenDatesList;
   }
 
-  //For MainMessagingPage and Deleting Account
+  ///For MainMessagingPage and Deleting Account
   Future<List<dynamic>> getMyMessagesList() async{
     String _uid = FirebaseAuth.instance.currentUser.uid.toString();
     var result = await firestoreInstance.collection('users').doc(_uid).get();
     return result['messages'];
   }
 
+  ///Get all my matches information
   Future<List<dynamic>> getMyMatches() async{
     String _uid = FirebaseAuth.instance.currentUser.uid.toString();
     var result = await firestoreInstance.collection('users').doc(_uid).get();
     return result['matches'];
   }
 
-  //Function to be called on disLike button clicked
+  ///Function to be called on disLike button clicked
   Future<bool> updateOnDisLikes(String otherUid) async{
     String _uid = FirebaseAuth.instance.currentUser.uid.toString();
     var ref = firestoreInstance.collection('users').doc('$_uid');
@@ -110,23 +220,30 @@ class DatabaseService with ChangeNotifier{
     return true;
   }
 
-  //Function to be called on like button clicked
-  Future<bool> updateOnLikes(String otherUid) async {
+  ///Function to be called on like button clicked
+  Future<bool> updateOnLikes(int type, String otherUid) async {
     String _uid = FirebaseAuth.instance.currentUser.uid.toString();
     var ref = firestoreInstance.collection('users').doc('$_uid');
     var refOther = firestoreInstance.collection('users').doc('$otherUid');
 
+    LikesModel like2 = LikesModel(type: type, like: refOther.path.toString(), date: DateTime.now());
+    LikesModel like = LikesModel(type: type, like: ref.path.toString(), date: DateTime.now());
+
     //update my lastSeen list
-    ref.update({'lastSeen' : FieldValue.arrayUnion([otherUid])});
+    ref.update({'lastSeen' : FieldValue.arrayUnion([like2.toJson()])});
+
 
     //update otherUsers liked list
-    refOther.update({'likes': FieldValue.arrayUnion([ref.path.toString()])});
+    refOther.update({'likes': FieldValue.arrayUnion([like.toJson()])});
+
+    //send notification
+    MessagingService.sendToTopic(title: 'Likes', body: 'Someone liked you', topic: '${otherUid}_like');
 
     return true;
 
   }
 
-  //adding users to the match
+  ///adding users to the match
   Future<bool> updateMatch(UserModel me, UserModel other) async{
 
     var meRef = firestoreInstance.collection('users').doc('${me.uid}');
@@ -143,7 +260,7 @@ class DatabaseService with ChangeNotifier{
 
   }
 
-  //Remove matches from their respective list on creating conversation
+  ///Remove matches from their respective list on creating conversation
   Future<bool> removeMatches(String otherReference) async{
     //Prepare my reference
     String uid = FirebaseAuth.instance.currentUser.uid.toString();
@@ -169,7 +286,7 @@ class DatabaseService with ChangeNotifier{
 
   }
 
-  //Checks if two users are a match and returns a bool
+  ///Checks if two users are a match and returns a bool
   Future<bool> checkIfMatch(String otherUid) async{
     String uid = FirebaseAuth.instance.currentUser.uid.toString();
     var result = await firestoreInstance.collection('users').doc(uid).get();
@@ -188,7 +305,7 @@ class DatabaseService with ChangeNotifier{
 
   }
 
-  //CreateConversation
+  ///CreateConversation
   Future<bool> createConversation(UserModel me, UserModel other) async{
 
     UserModel wModel = me.gender.toLowerCase() == 'female' ? me : other;
@@ -209,12 +326,9 @@ class DatabaseService with ChangeNotifier{
       lastUpdate: DateTime.now(),
     );
 
-    //Create the conversation
+    ///Create the conversation
     DateTime date = DateTime.now();
     await conversationCollection.doc(convoId).set(convoModel.toJson());
-//    await conversationCollection.doc(convoId)
-//        .collection('conversation').doc(date.toIso8601String())
-//        .set(MessageModel(message: '${date.toIso8601String()}', from: 'tebesa', replyTo: '', time: date, messageId: date.toIso8601String(), type: 'text').toJson());
 
     var convoRef = firestoreInstance.collection('conversations').doc('$convoId');
 
@@ -229,11 +343,10 @@ class DatabaseService with ChangeNotifier{
   }
 
 
-  //Send message
+  ///Send message
   Future<void> sendMessage(String message, String replyTo, String type, String convoRef) async{
 
     UserModel me = await getMyInfo();
-    print('******** Me ******** ${me.uid}');
 
     DateTime date = new DateTime.now();
 
@@ -256,14 +369,41 @@ class DatabaseService with ChangeNotifier{
 
   }
 
-  //Delete Message
+
+  ///Update the unread message count
+  Future<List<UserModel>> updateUnreadMessage(String convoRef) async{
+    await firestoreInstance.doc(convoRef).update({'unreadMessage': 0});
+  }
+
+  ///Get only 10 users
+  Future<List<UserModel>> getTopPicksList() async{
+    List<UserModel> myDates = [];
+    List<dynamic> lastSeenDatesList = [];
+
+    UserModel me = await getMyInfo();
+
+    var result1 = await firestoreInstance.collection('users').doc(me.uid).get();
+    lastSeenDatesList = result1['lastSeen'];
+
+    var result = await firestoreInstance.collection('users').where('gender', isEqualTo: me.interest).get();
+
+    result.docs.forEach((element) {
+      if(!lastSeenDatesList.contains(UserModel.fromJson(element).uid)){
+        myDates.add(UserModel.fromJson(element));
+      }
+    });
+
+    return myDates;
+  }
+
+  ///Delete Message
   Future<void> deleteMessage(String convoRef, String messageId) async{
     //Delete the message
     await firestoreInstance.doc(convoRef).collection('conversation').doc(messageId).delete();
 
   }
 
-  //Delete the whole conversation with one person
+  ///Delete the whole conversation with one person
   Future<void> deleteConversation(String convoRef) async{
     //get both Users reference
     var result = await firestoreInstance.doc(convoRef).get();
@@ -278,11 +418,5 @@ class DatabaseService with ChangeNotifier{
     await firestoreInstance.doc(convoRef).delete();
 
   }
-
-
-
-
-
-
 
 }

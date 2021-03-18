@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/topPicksItem.dart';
+import 'package:dating/Services/databaseService.dart';
 import 'package:flutter/material.dart';
 
 class TopPicks extends StatefulWidget {
@@ -7,6 +11,26 @@ class TopPicks extends StatefulWidget {
 }
 
 class _TopPicksState extends State<TopPicks> {
+
+  List<UserModel> dates = [];
+
+  DatabaseService _databaseService = new DatabaseService();
+
+  List<UserModel> topPickedUsers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // TODO: get the topPick dates
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      _databaseService.getTopPicksList().then((value){
+        setState(() {
+          topPickedUsers = value;
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +47,7 @@ class _TopPicksState extends State<TopPicks> {
           itemBuilder: (_, index) {
             return TopPicksItem();
           },
-          itemCount:9,
+          itemCount:topPickedUsers.length,
         ),
       ),
     );

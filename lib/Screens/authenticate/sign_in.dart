@@ -1,7 +1,6 @@
-import 'package:country_codes/country_codes.dart';
+
 import 'package:dating/Screens/authenticate/AuthState.dart';
 import 'package:dating/Services/authService.dart';
-import 'package:dating/Services/locationService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -19,8 +18,6 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   AuthService _authService = new AuthService();
-  LocationService _locationService = new LocationService();
-  
 
   String _phone = '';
   String _opt = '';
@@ -145,6 +142,7 @@ class _SignInState extends State<SignIn> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.00),
               child: PinCodeTextField(
+                appContext: context,
                 keyboardType: TextInputType.number,
                 length: 6,
                 obscureText: false,
@@ -248,14 +246,14 @@ class _SignInState extends State<SignIn> {
 
             Spacer(),
 
-            Center(
-              child: FlatButton(
-                child: Text('Anon Sign-In', style: TextStyle(color: Colors.grey[700], letterSpacing: 1.0, fontSize: 20.0, fontWeight: FontWeight.w400),),
-                onPressed: () async{
-                  await _authService.signInAnon();
-                },
-              ),
-            ),
+//            Center(
+//              child: TextButton(
+//                child: Text('Anon Sign-In', style: TextStyle(color: Colors.grey[700], letterSpacing: 1.0, fontSize: 20.0, fontWeight: FontWeight.w400),),
+//                onPressed: () async{
+//                  await _authService.signInAnon();
+//                },
+//              ),
+//            ),
 
           ],
         ),

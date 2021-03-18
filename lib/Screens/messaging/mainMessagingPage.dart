@@ -130,9 +130,18 @@ class _MainMessagingPageState extends State<MainMessagingPage> {
                                 child: Container(),
                                 backgroundImage: NetworkImage(snapshot2.data['photos'][0]),
                               ),
-                              trailing: Text(DateFormat('h:mm a').format(lMessage.time).toString(), style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400, letterSpacing: 0.2, color: Colors.grey[500]),),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(DateFormat('h:mm a').format(lMessage.time).toString(), style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400, letterSpacing: 0.2, color: Colors.grey[500]),),
+                                  snapshot.data['unreadMessage']==0 ? Container(height: 10.0,width: 10.0,) : Text('${snapshot.data['unreadMessage']}', style: TextStyle(color: Colors.redAccent, fontSize: 18.0, fontWeight: FontWeight.w600),),
+                                ],
+                              ),
                             ),
                             onTap: (){
+                              if(lMessage.from!=me.uid){
+                                _databaseService.updateUnreadMessage(messagesList[index]);
+                              }
                               Navigator.of(context)
                                   .push(MaterialPageRoute(builder: (_) => MessagePage(convoRef: messagesList[index], fullName: snapshot2.data['fullName'], url: snapshot2.data['photos'][0], lastSeenTime: DateFormat('h:mm a').format(lMessage.time).toString(),)));
                             },

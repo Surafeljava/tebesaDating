@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dating/Models/likesModel.dart';
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/likes/userProfileView.dart';
-import 'package:dating/Services/databaseService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
@@ -82,8 +82,9 @@ class _LikesPageState extends State<LikesPage> {
           return ListView.builder(
             itemCount: snapshot.data['likes'].length,
             itemBuilder: (context, index){
+              LikesModel like = LikesModel.fromJson(snapshot.data['likes'][index]);
               return StreamBuilder(
-                  stream: FirebaseFirestore.instance.doc(snapshot.data['likes'][index]).snapshots(),
+                  stream: FirebaseFirestore.instance.doc(like.like).snapshots(),
                   builder: (context, snapshot2) {
                     if(snapshot2.data==null){
                       return Center(

@@ -1,7 +1,6 @@
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:dating/Screens/home/mainScroll/matchState.dart';
-import 'package:dating/Screens/home/mainScroll/matchView.dart';
 import 'package:dating/Services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -126,6 +125,10 @@ class _SingleUserViewState extends State<SingleUserView> {
 
             Spacer(flex: 1,),
 
+            checkIfInList(widget.userModel.uid) ?
+            Container(
+              child: Text('Seen Before'),
+            ) :
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -268,7 +271,7 @@ class _SingleUserViewState extends State<SingleUserView> {
     if(from==1){
       bool res = await _databaseService.updateOnDisLikes(widget.userModel.uid);
     }else{
-      bool res = await _databaseService.updateOnLikes(widget.userModel.uid);
+      bool res = await _databaseService.updateOnLikes(from, widget.userModel.uid);
     }
 
     bool checkIfMatch = await _databaseService.checkIfMatch(widget.userModel.uid);

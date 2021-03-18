@@ -1,5 +1,4 @@
 import 'package:dating/Screens/authenticate/sign_in.dart';
-import 'package:dating/Services/authService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
@@ -11,10 +10,6 @@ class Authenticate extends StatefulWidget {
 }
 
 class _AuthenticateState extends State<Authenticate> {
-
-  AuthService _authService = new AuthService();
-
-  static int signIn = 0;
 
   @override
   Widget build(BuildContext context) {
