@@ -7,7 +7,7 @@ class PaymentModel{
   final String transactionRef;
   final DateTime date;
   final int packageMonth;
-  final bool status;
+  final int status;
   final bool confirmed;
   final String email;
   final String depositedByName;
@@ -17,7 +17,7 @@ class PaymentModel{
   factory PaymentModel.fromJson(dynamic json){
     return PaymentModel(
       userId: json['userId'],
-      acceptedDate: json['status'] ? DateTime.fromMicrosecondsSinceEpoch(json['acceptedDate'].microsecondsSinceEpoch) : null,
+      acceptedDate: json['status']==1 ? DateTime.fromMicrosecondsSinceEpoch(json['acceptedDate'].microsecondsSinceEpoch) : null,
       bank: json['bank'],
       date: DateTime.fromMicrosecondsSinceEpoch(json['date'].microsecondsSinceEpoch),
       packageMonth: json['packageMonth'],

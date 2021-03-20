@@ -117,9 +117,9 @@ class DatabaseService with ChangeNotifier{
 
 
   ///Update payment status * adding confirmation number *
-  Future<void> updatePayment(String confirmationNumber) async{
+  Future<void> updatePayment({String transactionRef, String depositedByName}) async{
     String _uid = FirebaseAuth.instance.currentUser.uid.toString();
-    await paymentCollection.doc(_uid).update({'confirmationNumber': confirmationNumber, 'confirmed': true});
+    await paymentCollection.doc(_uid).update({'transactionRef': transactionRef, 'confirmed': true, 'depositedByName': depositedByName, 'status': 0});
   }
 
 
@@ -157,7 +157,7 @@ class DatabaseService with ChangeNotifier{
   Future<void> getNewDates(BuildContext context) async{
 
     List<UserModel> myDates = [];
-    List<UserModel> myLastSeenDates = [];
+    int myLastSeenDates = 0;
     List<dynamic> lastSeenDatesList = [];
 
     UserModel me = await getMyInfo();
@@ -175,9 +175,11 @@ class DatabaseService with ChangeNotifier{
       }
     });
 
+
     result.docs.forEach((element) {
       if(lastSeenDatesList.contains(UserModel.fromJson(element).uid)){
         myDates.add(UserModel.fromJson(element));
+        myLastSeenDates += 1;
       }
     });
 

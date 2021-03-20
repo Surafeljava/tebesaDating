@@ -4,7 +4,9 @@ import 'package:dating/Models/userAuthModel.dart' as  usr;
 import 'package:dating/Screens/authenticate/authenticate.dart';
 import 'package:dating/Screens/home/mainScroll/mainHome.dart';
 import 'package:dating/Screens/loading/loginCheckLoading.dart';
+import 'package:dating/Screens/onBoarding/onBoardingScreen.dart';
 import 'package:dating/Screens/payment/payment.dart';
+import 'package:dating/Screens/payment/paymentApprovalWait.dart';
 import 'package:dating/Screens/payment/paymentCheckingLoadingPage.dart';
 import 'package:dating/Screens/payment/paymentConfirmPage.dart';
 import 'package:dating/Screens/registration/registration.dart';
@@ -31,6 +33,8 @@ class _WrapperState extends State<Wrapper> {
 
   bool checkingUser = false;
 
+  bool usedBefore = true;
+
   @override
   Widget build(BuildContext context) {
 
@@ -38,8 +42,16 @@ class _WrapperState extends State<Wrapper> {
 
     final int a = Provider.of<Registration>(context).getUserIn;
 
-    if(user==null){
+    _checkFirstTimeUsage().then((value){
+      setState(() {
+        usedBefore = value;
+      });
+    });
+
+    if(user==null && usedBefore){
       return Authenticate();
+    }else if(!usedBefore){
+      return OnBoardingScreen(onFinishClicked: changeUsedBefore,);
     }else{
       checkUserInfo().then((value) {
         setState(() {
@@ -63,20 +75,17 @@ class _WrapperState extends State<Wrapper> {
         if(paymentChecked){
           switch(paymentStatus){
             case -1:
-              //todo: bring the payment page
-              return Payment();
+              return Payment(expired: false,);
             case 0:
-              //todo: show expired page and take them to payment page
-              return Payment();
+              return Payment(expired: true,);
             case 1:
-              //todo: waiting for approval page
-              return Payment();
+              return PaymentApprovalWait();
             case 2:
-              //todo: take them to confirmation page
-              return PaymentConfirmPage();
+              return PaymentConfirmPage(denied: false,);
             case 3:
               return MainHome();
-              break;
+            case 4:
+              return PaymentConfirmPage(denied: true,);
           }
         }else{
           //todo: return checking for payment page
@@ -90,14 +99,24 @@ class _WrapperState extends State<Wrapper> {
     }
   }
 
-  Future<String> _getUserPreference() async{
+  //todo: use these functions on loading
+  Future<bool> _checkFirstTimeUsage() async{
     final pref = await SharedPreferences.getInstance();
-    final userPref = pref.getString('userUid');
+    final userPref = pref.getString('usedBefore');
     if(userPref==null){
-      return '';
+      return false;
     }else{
-      return userPref;
+      return true;
     }
+  }
+
+  //This function will be sent to the child UI, so it can change on the parent
+  void changeUsedBefore() async{
+    final pref = await SharedPreferences.getInstance();
+    pref.setString('usedBefore', 'yes');
+    setState(() {
+      usedBefore = !usedBefore;
+    });
   }
 
   Future<bool> checkUserInfo() async{
@@ -121,6 +140,7 @@ class _WrapperState extends State<Wrapper> {
   // 1 == Paid and confirmed but not approved (confirmationNumber of transaction submitted)
   // 2 == Paid but not confirmed and not approved
   // 3 == Paid and confirmed and approved and not-expired
+  // 4 == Paid and confirmed but denied
   Future<int> checkPaymentInfo() async{
     var firebaseUser = FirebaseAuth.instance.currentUser;
     var result = await FirebaseFirestore.instance.collection('paymentRequests').doc(firebaseUser.uid).get();
@@ -132,20 +152,16 @@ class _WrapperState extends State<Wrapper> {
       
       bool expired = paymentModel.acceptedDate==null ? false : paymentModel.acceptedDate.difference(DateTime.now()).inDays > 60;
       
-      if(!paymentModel.status && !paymentModel.confirmed){
-        return 2;
-      }
-      
-      if(!paymentModel.status && paymentModel.confirmed){
-        return 1;
-      }
-      
-      if(paymentModel.status && expired){
-        return 0;
-      }
-
-      if(paymentModel.status && !expired){
+      if(paymentModel.status==1 && paymentModel.confirmed && !expired){
         return 3;
+      }else if(paymentModel.status==1 && paymentModel.confirmed && expired){
+        return 0;
+      }else if(paymentModel.status==0 && paymentModel.confirmed){
+        return 1;
+      }else if(paymentModel.status==-1 && paymentModel.confirmed){
+        return 4;
+      }else if(!paymentModel.confirmed){
+        return 2;
       }
     }else{
       return -1;

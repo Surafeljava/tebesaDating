@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:spring_button/spring_button.dart';
 
 class PaymentConfirmPage extends StatefulWidget {
+
+  final bool denied;
+  PaymentConfirmPage({@required this.denied});
+
   @override
   _PaymentConfirmPageState createState() => _PaymentConfirmPageState();
 }
@@ -63,6 +67,12 @@ class _PaymentConfirmPageState extends State<PaymentConfirmPage> {
                 color: Colors.grey[100],
                 child: ListView(
                   children: [
+
+                    widget.denied ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Your Payment confirmation has been denied! please check and fill the form again.', style: TextStyle(fontSize: 17, color: Colors.red, fontWeight: FontWeight.w500, letterSpacing: 0.5),),
+                    ) : Container(),
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('Please fill this form after paying!', style: TextStyle(fontSize: 15, color: Colors.red, fontWeight: FontWeight.w400, letterSpacing: 1.0),),
@@ -98,7 +108,7 @@ class _PaymentConfirmPageState extends State<PaymentConfirmPage> {
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
                       child: TextFormField(
                         autofocus: true,
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.text,
                         controller: depositedByName,
                         style: TextStyle(
                             fontSize: 18.0,
@@ -123,7 +133,7 @@ class _PaymentConfirmPageState extends State<PaymentConfirmPage> {
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
                       child: TextFormField(
                         autofocus: false,
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.text,
                         controller: tRefNumber,
                         style: TextStyle(
                             fontSize: 18.0,
@@ -176,6 +186,11 @@ class _PaymentConfirmPageState extends State<PaymentConfirmPage> {
 
                           //Validate the given inputs
                           if(_formKey.currentState.validate()){
+
+                            setState(() {
+                              loading = true;
+                            });
+
                             final snackBarRegistered = SnackBar(
                               content: Container(
                                 height: MediaQuery.of(context).size.height,
@@ -189,7 +204,7 @@ class _PaymentConfirmPageState extends State<PaymentConfirmPage> {
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(20.0),
                                       ),
-                                      child: Center(child: Text('Payment Confirmation Sent!', style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 15.0),)),
+                                      child: Center(child: Text('Payment Confirmation Sending!', style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 15.0),)),
                                     ),
                                   ],
                                 ),
@@ -199,6 +214,15 @@ class _PaymentConfirmPageState extends State<PaymentConfirmPage> {
                               duration: Duration(seconds: 2),
                             );
                             _scaffoldKey.currentState.showSnackBar(snackBarRegistered);
+
+                            //Updating the paymentRequest detail
+                            await databaseService.updatePayment(transactionRef: tRefNumber.text, depositedByName: depositedByName.text);
+
+                            setState(() {
+                              loading = false;
+                            });
+
+                            //Navigate to the approval waiting page
 
                           }else{
 

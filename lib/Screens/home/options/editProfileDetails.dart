@@ -21,10 +21,10 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   UserModel me;
   bool myInfoGot = false;
 
-  TextEditingController emailController = new TextEditingController();
-  TextEditingController fullNameController = new TextEditingController();
-  TextEditingController bDateController = new TextEditingController();
-  TextEditingController bioController = new TextEditingController();
+  TextEditingController emailController;
+  TextEditingController fullNameController;
+  TextEditingController bDateController;
+  TextEditingController bioController;
 
   @override
   void initState() {
@@ -36,6 +36,10 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
         me = value;
         myInfoGot = true;
       });
+      emailController = new TextEditingController(text: me.email);
+      fullNameController = new TextEditingController(text: me.fullName);
+      bDateController = new TextEditingController(text: me.bDate);
+      bioController = new TextEditingController(text: me.bio);
     });
 
   }
@@ -76,7 +80,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                   color: Colors.black
               ),
               decoration: InputDecoration(
-                labelText: '${me.email}',
+                labelText: 'Email',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
                 hintText: 'Email',
                 hintStyle: TextStyle(
@@ -99,7 +103,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
               ),
               controller: fullNameController,
               decoration: InputDecoration(
-                labelText: '${me.fullName}',
+                labelText: 'FullName',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
                 hintText: 'FullName',
                 hintStyle: TextStyle(
@@ -126,7 +130,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                   color: Colors.black
               ),
               decoration: InputDecoration(
-                labelText: '${me.bDate}',
+                labelText: 'BirthDate',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
                 hintText: 'BirthDate',
                 hintStyle: TextStyle(
@@ -149,7 +153,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
               minLines: 2,
               controller: bioController,
               decoration: InputDecoration(
-                labelText: '${me.bio}',
+                labelText: 'Bio',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
                 hintText: 'Bio',
                 hintStyle: TextStyle(
@@ -169,14 +173,14 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                   width: MediaQuery.of(context).size.width-30,
                   height: 50.0,
                   decoration: BoxDecoration(
-                      color: emailController.text.isEmpty || fullNameController.text.isEmpty || bDateController.text.isEmpty || bioController.text.isEmpty ? Colors.grey[200] : Color(0xFFD12043),
+                      color: Color(0xFFD12043),
                       borderRadius: BorderRadius.circular(10.0)
                   ),
                   child: Center(
                     child:
                     Text(
                       'Save',
-                      style: TextStyle(color: emailController.text.isEmpty || fullNameController.text.isEmpty || bDateController.text.isEmpty || bioController.text.isEmpty ? Colors.grey[800] : Colors.white, fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Colors.white, fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

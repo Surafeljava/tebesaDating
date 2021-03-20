@@ -21,14 +21,15 @@ class _HomeState extends State<Home> {
 
   DatabaseService _databaseService = new DatabaseService();
 
+  PageController mainPageController;
+
   bool loading = true;
 
   UserModel me;
 
   @override
   void initState() {
-    super.initState();
-    // TODO: get other users data
+
     _databaseService.getNewDates(widget.theContext).then((value) {
       setState(() {
         loading = false;
@@ -40,6 +41,10 @@ class _HomeState extends State<Home> {
         me = value;
       });
     });
+
+    mainPageController = new PageController(initialPage: 0);
+
+    super.initState();
   }
 
   @override
@@ -62,9 +67,37 @@ class _HomeState extends State<Home> {
     ) :
     Container(
       width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
       child: Provider.of<MatchState>(context).getMatchState ?
       MatchView(otherUser: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage-1], me: me) :
-      SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage], fromHome: true,),
+      PageView.builder(
+        itemCount: Provider.of<DatesState>(context).getMyDates.length,
+        controller: mainPageController,
+        scrollDirection: Axis.vertical,
+        itemBuilder: (context, index){
+          int thePage = 0;
+          if (mainPageController.position.minScrollExtent != null && mainPageController.position.maxScrollExtent != null) {
+            thePage = mainPageController.page.round();
+          }
+          return SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[thePage], fromHome: true, changeThePage: changeCurrentPage, pageBack: index==0 ? null : pageBack,);
+//          return SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage], fromHome: true, changeThePage: changeCurrentPage,);
+        },
+      ),
     );
   }
+
+  void changeCurrentPage(){
+    mainPageController.nextPage(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeIn
+    );
+  }
+
+  void pageBack(){
+    mainPageController.previousPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn
+    );
+  }
+
 }

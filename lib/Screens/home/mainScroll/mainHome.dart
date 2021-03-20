@@ -371,7 +371,6 @@ class _MainHomeState extends State<MainHome> {
       return Stack(
         children: [
           Home(theContext: context,),
-          //Todo: add the animation here
           showLikesAnimation ? NotifyAnimations(animationType: 0,) : Container(),
         ],
       );

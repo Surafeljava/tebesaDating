@@ -21,8 +21,7 @@ class _TopPicksState extends State<TopPicks> {
   @override
   void initState() {
     super.initState();
-    // TODO: get the topPick dates
-    Timer.periodic(Duration(seconds: 3), (timer) {
+    Timer.periodic(Duration(seconds: 20), (timer) {
       _databaseService.getTopPicksList().then((value){
         setState(() {
           topPickedUsers = value;

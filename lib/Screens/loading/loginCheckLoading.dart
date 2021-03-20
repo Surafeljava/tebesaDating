@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginCheckLoading extends StatelessWidget {
   @override
@@ -7,14 +8,18 @@ class LoginCheckLoading extends StatelessWidget {
     return Scaffold(
       body: Container(
         color: Colors.white,
+        width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Loading...', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20.0),),
-            SizedBox(height: 15.0,),
-            SpinKitChasingDots(
-              color: Color(0xFFD12043),
-              size: 40.0,
+            Text('Loading...', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 30.0, letterSpacing: 1.0),),
+            SizedBox(height: 20.0,),
+            Lottie.asset(
+              'assets/lottie/loading.json',
+              width: 300,
+              height: 300,
+              fit: BoxFit.fill,
             ),
           ],
         )

@@ -10,7 +10,9 @@ class SingleUserView extends StatefulWidget {
 
   @required final UserModel userModel;
   @required final bool fromHome;
-  SingleUserView({this.userModel, this.fromHome});
+  final Function changeThePage;
+  final Function pageBack;
+  SingleUserView({this.userModel, this.fromHome, this.changeThePage, this.pageBack});
 
   @override
   _SingleUserViewState createState() => _SingleUserViewState();
@@ -115,10 +117,23 @@ class _SingleUserViewState extends State<SingleUserView> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(widget.userModel.fullName, style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.w400),),
-                  Icon(Icons.keyboard_arrow_down, size: 30.0, color: Color(0xFFD12043),)
+                  Expanded(child: Text(widget.userModel.fullName, style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.w400),)),
+                  widget.pageBack == null ? Container() : TextButton.icon(
+                    label: Text('PRV'),
+                    icon: Icon(Icons.keyboard_arrow_up, size: 30.0, color: Color(0xFFD12043),),
+                    onPressed: (){
+                      widget.pageBack();
+                    },
+                  ),
+                  TextButton.icon(
+                    label: Text('NXT'),
+                    icon: Icon(Icons.keyboard_arrow_down, size: 30.0, color: Color(0xFFD12043),),
+                    onPressed: (){
+                      widget.changeThePage();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -155,7 +170,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                   useCache: false,
                   onTap: () async{
                     if(checkIfInList(widget.userModel.uid)){
-                      print('Do Nothing');
+//                      print('Do Nothing');
                       Navigator.of(context).pop();
                     }else{
                       await changePage(0, true ,this.context);
@@ -186,7 +201,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                   useCache: false,
                   onTap: () async{
                     if(checkIfInList(widget.userModel.uid)){
-                      print('Do Nothing');
+//                      print('Do Nothing');
                       Navigator.of(context).pop();
                     }else{
                       await changePage(1, true ,this.context);
@@ -217,7 +232,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                   useCache: false,
                   onTap: () async{
                     if(checkIfInList(widget.userModel.uid)){
-                      print('Do Nothing');
+//                      print('Do Nothing');
                       Navigator.of(context).pop();
                     }else{
                       await changePage(2, true ,this.context);
@@ -248,7 +263,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                   useCache: false,
                   onTap: () async{
                     if(checkIfInList(widget.userModel.uid)){
-                      print('Do Nothing');
+//                      print('Do Nothing');
                       Navigator.of(context).pop();
                     }else{
                       await changePage(3 , true, this.context);
@@ -278,6 +293,7 @@ class _SingleUserViewState extends State<SingleUserView> {
 
     if(widget.fromHome){
       Provider.of<MainHomeState>(context, listen: false).changePage(next);
+      widget.changeThePage();
       if(checkIfMatch){
         Provider.of<MatchState>(context, listen: false).setMatchState(true);
       }
@@ -285,7 +301,6 @@ class _SingleUserViewState extends State<SingleUserView> {
       if(checkIfMatch){
         Provider.of<MatchState>(context, listen: false).setMatchState(true);
       }
-
       Navigator.of(context).pop();
     }
 

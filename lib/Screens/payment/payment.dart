@@ -10,6 +10,9 @@ import 'package:spring_button/spring_button.dart';
 
 class Payment extends StatefulWidget {
 
+  final bool expired;
+  Payment({@required this.expired});
+
   @override
   _PaymentState createState() => _PaymentState();
 }
@@ -69,16 +72,30 @@ class _PaymentState extends State<Payment> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text('Choose Bank', style: TextStyle(fontSize: 20, color: Colors.grey[800], fontWeight: FontWeight.w400, letterSpacing: 1.0),),
               ),
+              widget.expired ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Your Last Payment has expired! please pay to continue using the application.', style: TextStyle(fontSize: 17, color: Colors.red, fontWeight: FontWeight.w500, letterSpacing: 0.5),),
+              ) : Container(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text('Full bank information will be sent to your email.', style: TextStyle(fontSize: 15, color: Colors.grey[800], fontWeight: FontWeight.w300, letterSpacing: 1.0),),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Row(
+                child: Column(
                   children: [
-                    Text('Amount: ', style: TextStyle(fontSize: 17, color: Colors.grey[800], fontWeight: FontWeight.w400, letterSpacing: 0.5),),
-                    Text('100 ETB', style: TextStyle(fontSize: 17, color: Colors.green, fontWeight: FontWeight.w500, letterSpacing: 0.5),),
+                    Row(
+                      children: [
+                        Text('Amount: ', style: TextStyle(fontSize: 17, color: Colors.grey[800], fontWeight: FontWeight.w400, letterSpacing: 0.5),),
+                        Text('100 ETB', style: TextStyle(fontSize: 17, color: Colors.green, fontWeight: FontWeight.w500, letterSpacing: 0.5),),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('Package: ', style: TextStyle(fontSize: 17, color: Colors.grey[800], fontWeight: FontWeight.w400, letterSpacing: 0.5),),
+                        Text('2 months', style: TextStyle(fontSize: 17, color: Colors.green, fontWeight: FontWeight.w500, letterSpacing: 0.5),),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -174,7 +191,7 @@ class _PaymentState extends State<Payment> {
                       int invoice = 10000 + random.nextInt(100000 - 10000);
 
                       //Creating payment model
-                      PaymentModel pModel = new PaymentModel(userId: _uid, invoice: invoice.toString(), acceptedDate: null, bank: bankNames[selected], date: DateTime.now(), transactionRef: "", packageMonth: 2, status: false, confirmed: false, email: email.text, depositedByName: "");
+                      PaymentModel pModel = new PaymentModel(userId: _uid, invoice: invoice.toString(), acceptedDate: null, bank: bankNames[selected], date: DateTime.now(), transactionRef: "", packageMonth: 2, status: 0, confirmed: false, email: email.text, depositedByName: "");
 
                       //Create payment request
                       await databaseService.createNewPayment(pModel);
@@ -202,8 +219,6 @@ class _PaymentState extends State<Payment> {
                         duration: Duration(seconds: 2),
                       );
                       _scaffoldKey.currentState.showSnackBar(snackBarRegistered);
-
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => PaymentConfirmPage()));
 
                     }else{
 
