@@ -1,8 +1,16 @@
+import 'package:dating/Models/userModel.dart';
+import 'package:dating/Screens/home/likes/userProfileView.dart';
+import 'package:dating/Screens/home/mainScroll/singleUserView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:spring_button/spring_button.dart';
 
 class TopPicksItem extends StatelessWidget {
+
+  final UserModel userModel;
+
+  TopPicksItem({this.userModel});
+
   @override
   Widget build(BuildContext context) {
     return SpringButton(
@@ -15,7 +23,7 @@ class TopPicksItem extends StatelessWidget {
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(15.0),
                 image: DecorationImage(
-                    image: AssetImage('assets/test/user1.jpg'),
+                    image: NetworkImage(userModel.photos[0]),
                     fit: BoxFit.cover
                 ),
                 boxShadow: [
@@ -49,8 +57,8 @@ class TopPicksItem extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            Text('User Name ', overflow: TextOverflow.ellipsis ,maxLines: 1, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: Colors.grey[800], letterSpacing: 0.5),),
-                            Text('My bio is here', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, color: Colors.grey[700], letterSpacing: 0.0),),
+                            Text('${userModel.fullName}', overflow: TextOverflow.ellipsis ,maxLines: 1, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: Colors.grey[800], letterSpacing: 0.5),),
+                            Text('${userModel.bio}', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, color: Colors.grey[700], letterSpacing: 0.0),),
                           ],
                         ),
                       ),
@@ -85,7 +93,7 @@ class TopPicksItem extends StatelessWidget {
         ],
       ),
       onTap: (){
-        print('yellow');
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => UserProfileView(userModel: userModel)));
       },
 
     );

@@ -27,8 +27,12 @@ class _HomeState extends State<Home> {
 
   UserModel me;
 
+  int _page = 0;
+
   @override
   void initState() {
+
+    mainPageController = new PageController(initialPage: 0);
 
     _databaseService.getNewDates(widget.theContext).then((value) {
       setState(() {
@@ -41,8 +45,6 @@ class _HomeState extends State<Home> {
         me = value;
       });
     });
-
-    mainPageController = new PageController(initialPage: 0);
 
     super.initState();
   }
@@ -69,18 +71,23 @@ class _HomeState extends State<Home> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: Provider.of<MatchState>(context).getMatchState ?
-      MatchView(otherUser: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage-1], me: me) :
+      MatchView(otherUser: Provider.of<DatesState>(context).getMyDates[_page], me: me) :
       PageView.builder(
         itemCount: Provider.of<DatesState>(context).getMyDates.length,
         controller: mainPageController,
         scrollDirection: Axis.vertical,
+        onPageChanged: (page){
+          setState(() {
+            _page = page;
+          });
+        },
         itemBuilder: (context, index){
-          int thePage = 0;
-          if (mainPageController.position.minScrollExtent != null && mainPageController.position.maxScrollExtent != null) {
-            thePage = mainPageController.page.round();
-          }
-          return SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[thePage], fromHome: true, changeThePage: changeCurrentPage, pageBack: index==0 ? null : pageBack,);
-//          return SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[Provider.of<MainHomeState>(context).getPage], fromHome: true, changeThePage: changeCurrentPage,);
+//          int thePage = 0;
+//          if (mainPageController.position.minScrollExtent != null && mainPageController.position.maxScrollExtent != null) {
+//            thePage = mainPageController.page.round();
+//          }
+
+          return SingleUserView(userModel: Provider.of<DatesState>(context).getMyDates[_page], fromHome: true, changeThePage: index!=Provider.of<DatesState>(context).getMyDates.length-1 ? changeCurrentPage : null, pageBack: index==0 ? null : pageBack,);
         },
       ),
     );

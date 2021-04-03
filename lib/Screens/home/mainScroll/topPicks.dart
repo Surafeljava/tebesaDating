@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dating/Models/userModel.dart';
+import 'package:dating/Screens/home/mainScroll/singleUserView.dart';
 import 'package:dating/Screens/home/mainScroll/topPicksItem.dart';
 import 'package:dating/Services/databaseService.dart';
 import 'package:flutter/material.dart';
@@ -18,22 +19,27 @@ class _TopPicksState extends State<TopPicks> {
 
   List<UserModel> topPickedUsers = [];
 
+  bool gettingTopPics = true;
+
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: 20), (timer) {
-      _databaseService.getTopPicksList().then((value){
-        setState(() {
-          topPickedUsers = value;
-        });
+    _databaseService.getTopPicksList().then((value){
+      setState(() {
+        topPickedUsers = value;
+        gettingTopPics = false;
       });
     });
   }
 
+  BuildContext myContext;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: gettingTopPics ? Center(
+        child: CircularProgressIndicator(),
+      ) : Container(
         padding: EdgeInsets.symmetric(horizontal: 5.0),
         child: GridView.builder(
           physics: BouncingScrollPhysics(),
@@ -44,7 +50,7 @@ class _TopPicksState extends State<TopPicks> {
               childAspectRatio: 0.8
           ),
           itemBuilder: (_, index) {
-            return TopPicksItem();
+            return TopPicksItem(userModel: topPickedUsers[index],);
           },
           itemCount:topPickedUsers.length,
         ),

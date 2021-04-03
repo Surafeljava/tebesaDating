@@ -12,8 +12,21 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>dating</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Can We Use Your Microphone Please</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Record audio for playback</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSAllowsArbitraryLoadsForMedia</key>
+        <true/>
+    </dict>uu
+    <key>com.apple.security.network.client</key>
+        <true/>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>

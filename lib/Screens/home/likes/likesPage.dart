@@ -79,6 +79,11 @@ class _LikesPageState extends State<LikesPage> {
             ),
           );
         }else{
+          if(snapshot.data['likes'].length == 0){
+            return Center(
+              child: Text('No Likes', style: TextStyle(fontWeight: FontWeight.w300, color: Colors.grey[500], fontSize: 25.0, letterSpacing: 1.0),),
+            );
+          }
           return ListView.builder(
             itemCount: snapshot.data['likes'].length,
             itemBuilder: (context, index){
@@ -104,9 +109,7 @@ class _LikesPageState extends State<LikesPage> {
                             trailing: Icon(Icons.favorite, color: Colors.pinkAccent, size: 18.0,)
                           ),
                           onTap: (){
-                            //TODO: open the user profile page
                             Navigator.of(context).push(MaterialPageRoute(builder: (_) => UserProfileView(userModel: userModel)));
-
                           },
                         ),
                       );

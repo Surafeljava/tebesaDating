@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:provider/provider.dart';
+import 'package:dating/Models/lastSeenModel.dart';
 
 import 'package:mailer/mailer.dart';
 
@@ -131,6 +132,15 @@ class DatabaseService with ChangeNotifier{
     return me.photos;
   }
 
+  ///Upload audio
+  Future<String> uploadAudio(File audio, String name) async {
+    fbStore.Reference ref = fbStore.FirebaseStorage.instance.ref('userAudio/$name');
+    fbStore.TaskSnapshot uploadTask = await ref.putFile(audio);
+
+    final String downloadUrl = await uploadTask.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
   ///Upload one photo
   Future<String> uploadOnePhoto(File image, String name) async {
     fbStore.Reference ref = fbStore.FirebaseStorage.instance.ref('userImages/$name');
@@ -159,25 +169,30 @@ class DatabaseService with ChangeNotifier{
     List<UserModel> myDates = [];
     int myLastSeenDates = 0;
     List<dynamic> lastSeenDatesList = [];
+    List<String> lastSeenDates = [];
 
     UserModel me = await getMyInfo();
-
-//    String genderToFind = me.gender=='Male' ? 'Female' : 'Male';
 
     var result1 = await firestoreInstance.collection('users').doc(me.uid).get();
     lastSeenDatesList = result1['lastSeen'];
 
     var result = await firestoreInstance.collection('users').where('gender', isEqualTo: me.interest).get();
 
+    for(dynamic last in lastSeenDatesList){
+      LastSeenModel lastModel = LastSeenModel.fromJson(last);
+      String lastUid = lastModel.like.split('/')[1].toString();
+      lastSeenDates.add(lastUid);
+    }
+
     result.docs.forEach((element) {
-      if(!lastSeenDatesList.contains(UserModel.fromJson(element).uid)){
+      if(!lastSeenDates.contains(UserModel.fromJson(element).uid)){
         myDates.add(UserModel.fromJson(element));
       }
     });
 
 
     result.docs.forEach((element) {
-      if(lastSeenDatesList.contains(UserModel.fromJson(element).uid)){
+      if(lastSeenDates.contains(UserModel.fromJson(element).uid)){
         myDates.add(UserModel.fromJson(element));
         myLastSeenDates += 1;
       }
@@ -216,9 +231,12 @@ class DatabaseService with ChangeNotifier{
   Future<bool> updateOnDisLikes(String otherUid) async{
     String _uid = FirebaseAuth.instance.currentUser.uid.toString();
     var ref = firestoreInstance.collection('users').doc('$_uid');
+    var refOther = firestoreInstance.collection('users').doc('$otherUid');
+
+    LikesModel lastSeenModel = LikesModel(type: 0, like: refOther.path.toString(), date: DateTime.now());
 
     //update my lastSeen list
-    ref.update({'lastSeen' : FieldValue.arrayUnion([otherUid])});
+    ref.update({'lastSeen' : FieldValue.arrayUnion([lastSeenModel.toJson()])});
     return true;
   }
 
@@ -298,7 +316,8 @@ class DatabaseService with ChangeNotifier{
     String path = ref.path.toString();
 
     for(dynamic a in res){
-      if(a.toString()==path){
+      LikesModel like = LikesModel.fromJson(a);
+      if(like.like.toString()==path){
         return true;
       }
     }

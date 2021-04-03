@@ -1,9 +1,18 @@
+
+
+import 'dart:io';
+
+import 'package:audio_recorder/audio_recorder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dating/Models/messageModels.dart';
 import 'package:dating/Screens/messaging/messagesDisplay.dart';
-import 'package:dating/Services/authService.dart';
 import 'package:dating/Services/databaseService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MessagePage extends StatefulWidget {
 
@@ -31,15 +40,57 @@ class _MessagePageState extends State<MessagePage> {
 
   DatabaseService _databaseService = new DatabaseService();
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool val = false;
+
+  bool recording = false;
+
+  int recordState = 0;
+
+  bool audioPermission =  false;
+
+  bool sendingAudio = false;
+
+  String currentRecordedUrl = '';
+  String currentRecordedTime = '';
+
+  bool reply = false;
+  String replyTo = '';
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    Permission.microphone.status.then((value) {
+      print('***** Permission: ${value.toString()} *****');
+    });
+  }
+
+  format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+
+  void addReply(String toWhat){
+    setState(() {
+      reply = true;
+      replyTo = toWhat;
+    });
+  }
+
+  void removeReply(){
+    setState(() {
+      reply = false;
+      replyTo = '';
+    });
+  }
+
+  void deleteMessage(MessageModel model) async{
+    await _databaseService.deleteMessage(widget.convoRef, model.messageId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.0,
@@ -70,10 +121,10 @@ class _MessagePageState extends State<MessagePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.grey[800],),
+            icon: Icon(Icons.videocam, color: Colors.grey[800], size: 28.0,),
             color: Colors.white,
             onPressed: (){
-              print('More');
+              //generate
             },
           ),
         ],
@@ -83,21 +134,125 @@ class _MessagePageState extends State<MessagePage> {
         padding: EdgeInsets.only(bottom: 5.0),
         child: Column(
           children: [
+
             Expanded(
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance.doc(widget.convoRef).collection('conversation').orderBy('time', descending: true).snapshots(),
                 builder: (context, snapshot) {
-                  return MessagesDisplay(snapshot: snapshot,);
+                  return MessagesDisplay(snapshot: snapshot, onReply: addReply, onDelete: deleteMessage,);
                 }
               ),
             ),
 
-            Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.image, color: Colors.grey[300],),
-                  onPressed: (){
 
+            //TODO: reply finish
+            reply ? Container(
+              height: 40.0,
+              color: Colors.grey[100],
+              padding: EdgeInsets.only(left: 10.0),
+              child: Row(
+                children: [
+                  Text('Reply to:'),
+                  SizedBox(width: 5.0,),
+                  Expanded(child: Text('$replyTo', style: TextStyle(color: Colors.grey[500]),)),
+                  IconButton(
+                    icon: Icon(Icons.close, color: Colors.grey[800],),
+                    onPressed: removeReply,
+                  )
+                ],
+              )
+            ) : Container(),
+
+
+
+            recordState!=0 ? Container(
+              height: 50.0,
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+                  IconButton(
+                    icon: Icon(Icons.close, color: Colors.redAccent, size: 25.0,),
+                    onPressed: (){
+                      setState(() {
+                        recordState = 0;
+                      });
+                    },
+                  ),
+
+                  recordState==1 ? IconButton(
+                    icon: Icon(Icons.stop, color: Colors.grey[800], size: 25.0,),
+                    onPressed: () async{
+
+                      setState(() {
+                        recordState = 2;
+                      });
+
+                      Recording recording = await AudioRecorder.stop();
+                      setState(() {
+                        currentRecordedUrl = recording.path;
+                        currentRecordedTime = '${format(recording.duration)}';
+                      });
+                      print("Path : ${recording.path},  Format : ${recording.audioOutputFormat},  Duration : ${recording.duration},  Extension : ${recording.extension},");
+                    },
+                  ): Container(),
+
+                  Spacer(),
+
+                  recordState!=2 ? Lottie.asset(
+                    'assets/lottie/recording.json',
+                    width: 60,
+                    height: 25,
+                    fit: BoxFit.fill,
+                  ) : Container(
+
+                  ),
+
+                  Text(recordState!=2 ? 'Recording...' : 'Stopped $currentRecordedTime'),
+
+                  Spacer(),
+
+                  recordState==2 ? IconButton(
+                    icon: Icon(Icons.send, color: Colors.blue, size: 25.0,),
+                    onPressed: () async{
+                      setState(() {
+                        recordState = 0;
+                        sendingAudio = true;
+                      });
+
+                      File audio = File('$currentRecordedUrl');
+                      String myUid = FirebaseAuth.instance.currentUser.uid.toString();
+                      String audioName = myUid + DateTime.now().toString();
+                      String uploadedAudioPath = await _databaseService.uploadAudio(audio, audioName);
+
+                      await _databaseService.sendMessage(uploadedAudioPath, replyTo, 'audio', widget.convoRef);
+                      removeReply();
+                      setState(() {
+                        sendingAudio = false;
+                      });
+                    },
+                  ) : Container(),
+                ],
+              ),
+            ): Row(
+              children: <Widget>[
+                sendingAudio ? Lottie.asset(
+                  'assets/lottie/recording.json',
+                  width: 40,
+                  height: 25,
+                  fit: BoxFit.fill,
+                ) : IconButton(
+                  icon: Icon(Icons.settings_voice, color: recording ? Colors.green : Colors.grey[800],),
+                  onPressed: () async{
+
+                    setState(() {
+                      recordState = 1;
+                    });
+                    final directory = await getApplicationDocumentsDirectory();
+                    String path = directory.path;
+
+                    await AudioRecorder.start(path: '$path/${DateTime.now().toIso8601String()}', audioOutputFormat: AudioOutputFormat.WAV);
                   },
                 ),
                 Expanded(child: textBoxWidget(_messageTextController)),
@@ -116,10 +271,12 @@ class _MessagePageState extends State<MessagePage> {
                       });
 
                       //Send the message
-                      await _databaseService.sendMessage(msg, '', 'text', widget.convoRef);
+                      await _databaseService.sendMessage(msg, replyTo, 'text', widget.convoRef);
+                      removeReply();
                     }
                     else{
-                      print('Write Something First');
+                      final snackBar = SnackBar(content: Text("No Text"), duration: Duration(milliseconds: 1000),);
+                      _scaffoldKey.currentState.showSnackBar(snackBar);
                     }
                   },
                 ) : SizedBox(width: 5.0,),

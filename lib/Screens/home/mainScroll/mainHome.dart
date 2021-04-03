@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dating/Models/paymentModel.dart';
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/likes/likesPage.dart';
 import 'package:dating/Screens/home/mainScroll/home.dart';
@@ -81,23 +82,23 @@ class _MainHomeState extends State<MainHome> {
       });
     });
 
-    Timer.periodic(Duration(seconds: 5), (timer) {
-      _databaseService.getMyLikes().then((value) {
-        if(likesNumber < value.length){
-          setState(() {
-            showLikesAnimation = true;
-            likesNumber = value.length;
-            //add to shared preference
-            addMySeenLikes(value.length);
-          });
-        }else{
-          setState(() {
-            showLikesAnimation = false;
-          });
-        }
-      });
-
-    });
+//    Timer.periodic(Duration(seconds: 5), (timer) {
+//      _databaseService.getMyLikes().then((value) {
+//        if(likesNumber < value.length){
+//          setState(() {
+//            showLikesAnimation = true;
+//            likesNumber = value.length;
+//            //add to shared preference
+//            addMySeenLikes(value.length);
+//          });
+//        }else{
+//          setState(() {
+//            showLikesAnimation = false;
+//          });
+//        }
+//      });
+//
+//    });
 
   }
 
@@ -222,7 +223,19 @@ class _MainHomeState extends State<MainHome> {
 
               ListTile(
                 title: Text('Payment', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
-                subtitle: Text('2 Months Left', style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.redAccent),),
+                subtitle: StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection('paymentRequests').doc(FirebaseAuth.instance.currentUser.uid).snapshots(),
+                  builder: (context, snapshot) {
+                    if(snapshot.data==null){
+                      return Text('Checking...', style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.lightBlue),);
+                    }else{
+                      int dateLeft = 0;
+                      PaymentModel payModel = PaymentModel.fromJson(snapshot.data);
+                      dateLeft = payModel.acceptedDate.difference(DateTime.now()).inDays + 60;
+                      return Text('$dateLeft Days Left', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.green),);
+                    }
+                  }
+                ),
                 leading: Icon(Icons.attach_money, color: Colors.grey[800],),
                 onTap: (){
                   print('Payment Page');
@@ -254,8 +267,8 @@ class _MainHomeState extends State<MainHome> {
         leading: IconButton(
           icon: SvgPicture.asset(
             menuIcon,
-            width: 30.0,
-            height: 30.0,
+            width: 30,
+            height: 30,
             color: Color(0xFFD12043),
           ),
           onPressed: (){
@@ -283,8 +296,8 @@ class _MainHomeState extends State<MainHome> {
           ),
           child: SvgPicture.asset(
             dotsMenu,
-            width: 25.0,
-            height: 25.0,
+            width: 25,
+            height: 25,
             color: Colors.white
           ),
           backgroundColor: Color(0xFFD12043),
@@ -305,8 +318,8 @@ class _MainHomeState extends State<MainHome> {
             IconButton(
               icon: SvgPicture.asset(
                 selectedPage==0 ? selectedIcons[0] : notSelectedIcons[0],
-                width: 25.0,
-                height: 25.0,
+                width: 25,
+                height: 25,
                 color: selectedPage==0 ? Color(0xFFD12043) : Colors.grey[400],
               ),
               onPressed: (){
@@ -318,8 +331,8 @@ class _MainHomeState extends State<MainHome> {
             IconButton(
               icon: SvgPicture.asset(
                 selectedPage==1 ? selectedIcons[1] : notSelectedIcons[1],
-                width: 25.0,
-                height: 25.0,
+                width: 25,
+                height: 25,
                 color: selectedPage==1 ? Color(0xFFD12043) : Colors.grey[400],
               ),
               onPressed: (){
@@ -332,8 +345,8 @@ class _MainHomeState extends State<MainHome> {
             IconButton(
               icon: SvgPicture.asset(
                 selectedPage==2 ? selectedIcons[2] : notSelectedIcons[2],
-                width: 25.0,
-                height: 25.0,
+                width: 25,
+                height: 25,
                 color: selectedPage==2 ? Color(0xFFD12043) : Colors.grey[400],
               ),
               onPressed: (){
@@ -345,8 +358,8 @@ class _MainHomeState extends State<MainHome> {
             IconButton(
               icon: SvgPicture.asset(
                 selectedPage==3 ? selectedIcons[3] : notSelectedIcons[3],
-                width: 25.0,
-                height: 25.0,
+                width: 25,
+                height: 25,
                 color: selectedPage==3 ? Color(0xFFD12043) : Colors.grey[400],
               ),
               onPressed: (){
