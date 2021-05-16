@@ -2,6 +2,7 @@ import 'package:dating/Screens/authenticate/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'AuthState.dart';
 
 class Authenticate extends StatefulWidget {
@@ -87,43 +88,49 @@ class _AuthenticateState extends State<Authenticate> {
                   },
                 ),
 
-                SizedBox(height: 10.0,),
-
-                SpringButton(
-                  SpringButtonType.OnlyScale,
-                  Container(
-                    width: MediaQuery.of(context).size.width/1.2,
-                    height: 50.0,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(
-                        width: 2.0,
-                        color: Color(0xFFD12043),
-                      ),
-                    ),
-                    child: Center(
-                      child:
-                      Text(
-                        'Log In with email address',
-                        style: TextStyle(color: Color(0xFFD12043), fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-                  useCache: false,
-                  onTap: () {
-                    setState(() {
-                      Provider.of<AuthState>(context, listen: false).setUserIn(1);
-                    });
-                  },
-                ),
+                // SizedBox(height: 10.0,),
+                //
+                // SpringButton(
+                //   SpringButtonType.OnlyScale,
+                //   Container(
+                //     width: MediaQuery.of(context).size.width/1.2,
+                //     height: 50.0,
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.circular(10.0),
+                //       border: Border.all(
+                //         width: 2.0,
+                //         color: Color(0xFFD12043),
+                //       ),
+                //     ),
+                //     child: Center(
+                //       child:
+                //       Text(
+                //         'Log In with email address',
+                //         style: TextStyle(color: Color(0xFFD12043), fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
+                //       ),
+                //     ),
+                //   ),
+                //   useCache: false,
+                //   onTap: () {
+                //     setState(() {
+                //       Provider.of<AuthState>(context, listen: false).setUserIn(1);
+                //     });
+                //   },
+                // ),
 
                 Spacer(flex: 3,),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Center(
-                    child: Text('Terms of service and privacy policy', textAlign: TextAlign.center, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),),
+                    child: TextButton.icon(
+                      icon: Icon(Icons.privacy_tip_outlined, color: Colors.black,),
+                      label: Text('Terms of service and privacy policy', textAlign: TextAlign.center, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: Colors.black),),
+                      onPressed: (){
+                        _launchURL("https://www.termsandconditionsgenerator.com/live.php?token=jj9Vex6yFR527ipYYJoF3bcFEpLTOS6C");
+                      },
+                    ),
                   ),
                 ),
 
@@ -135,4 +142,6 @@ class _AuthenticateState extends State<Authenticate> {
       ) : SignIn(),
     );
   }
+
+  void _launchURL(String _url) async => await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
 }

@@ -15,6 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dating/Screens/loading/checkingFreeDate.dart';
 
 class Wrapper extends StatefulWidget {
   @override
@@ -34,6 +35,10 @@ class _WrapperState extends State<Wrapper> {
   bool checkingUser = false;
 
   bool usedBefore = true;
+
+  bool freeTimeChecked = false;
+
+  bool freeTime = false;
 
   @override
   Widget build(BuildContext context) {
@@ -73,19 +78,39 @@ class _WrapperState extends State<Wrapper> {
         });
 
         if(paymentChecked){
-          switch(paymentStatus){
-            case -1:
-              return Payment(expired: false,);
-            case 0:
-              return Payment(expired: true,);
-            case 1:
-              return PaymentApprovalWait();
-            case 2:
-              return PaymentConfirmPage(denied: false,);
-            case 3:
+
+          //check for the free period
+
+
+          checkFreePeriod().then((value){
+            setState(() {
+              freeTimeChecked = true;
+              freeTime = value;
+            });
+          });
+
+          if(!freeTimeChecked){
+            return CheckingFreeDate();
+          }else{
+            if(freeTime){
+              //directly to home
               return MainHome();
-            case 4:
-              return PaymentConfirmPage(denied: true,);
+            }else{
+              switch(paymentStatus){
+                case -1:
+                  return Payment(expired: false,);
+                case 0:
+                  return Payment(expired: true,);
+                case 1:
+                  return PaymentApprovalWait();
+                case 2:
+                  return PaymentConfirmPage(denied: false,);
+                case 3:
+                  return MainHome();
+                case 4:
+                  return PaymentConfirmPage(denied: true,);
+              }
+            }
           }
         }else{
           //todo: return checking for payment page
@@ -166,6 +191,19 @@ class _WrapperState extends State<Wrapper> {
     }else{
       return -1;
     }
+  }
+
+  Future<bool> checkFreePeriod() async{
+    var result = await FirebaseFirestore.instance.collection('free_date').doc("expire").get();
+
+    DateTime freeDate = DateTime.fromMicrosecondsSinceEpoch(result['date'].microsecondsSinceEpoch);
+    
+    if(freeDate.isAfter(DateTime.now())){
+      return true;
+    }else{
+      return false;
+    }
+
   }
 
 }

@@ -35,7 +35,6 @@ class _MainHomeState extends State<MainHome> {
 
   String menuIcon = 'assets/icons/menuIcon.svg';
 
-  //TODO finish bottom navigation icons
   List<String> selectedIcons = ['assets/icons/navigation/home.svg', 'assets/icons/navigation/heart.svg', 'assets/icons/navigation/tinder.svg', 'assets/icons/navigation/message.svg'];
   List<String> notSelectedIcons = ['assets/icons/navigation/home-line.svg', 'assets/icons/navigation/heart-line.svg', 'assets/icons/navigation/tinder-line.svg', 'assets/icons/navigation/message-line.svg'];
   String dotsMenu = 'assets/icons/navigation/dots-menu.svg';
@@ -57,10 +56,31 @@ class _MainHomeState extends State<MainHome> {
 
   int likesNumber = 0;
 
+  bool onFreePackage = false;
+
+  Future<bool> checkFreePeriod() async{
+    var result = await FirebaseFirestore.instance.collection('free_date').doc("expire").get();
+
+    DateTime freeDate = DateTime.fromMicrosecondsSinceEpoch(result['date'].microsecondsSinceEpoch);
+
+    if(freeDate.isAfter(DateTime.now())){
+      return true;
+    }else{
+      return false;
+    }
+
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    checkFreePeriod().then((value) {
+      setState(() {
+        onFreePackage = value;
+      });
+    });
+
     _databaseService.getMyInfo().then((value){
       setState(() {
         user = value;
@@ -221,7 +241,14 @@ class _MainHomeState extends State<MainHome> {
                 },
               ),
 
-              ListTile(
+              onFreePackage ? ListTile(
+                title: Text('Account', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
+                subtitle: Text('ON FREE TRIAL', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.green),),
+                leading: Icon(Icons.attach_money, color: Colors.grey[800],),
+                onTap: (){
+                  print('Payment Page');
+                },
+              ) : ListTile(
                 title: Text('Payment', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
                 subtitle: StreamBuilder(
                   stream: FirebaseFirestore.instance.collection('paymentRequests').doc(FirebaseAuth.instance.currentUser.uid).snapshots(),
