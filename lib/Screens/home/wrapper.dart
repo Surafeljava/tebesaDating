@@ -39,6 +39,7 @@ class _WrapperState extends State<Wrapper> {
   bool freeTimeChecked = false;
 
   bool freeTime = false;
+  bool freeTimeTrue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +91,7 @@ class _WrapperState extends State<Wrapper> {
           });
 
           if(!freeTimeChecked){
-            return CheckingFreeDate();
+            return CheckingFreeDate(freeTrial: freeTimeTrue,);
           }else{
             if(freeTime){
               //directly to home
@@ -199,6 +200,15 @@ class _WrapperState extends State<Wrapper> {
     DateTime freeDate = DateTime.fromMicrosecondsSinceEpoch(result['date'].microsecondsSinceEpoch);
     
     if(freeDate.isAfter(DateTime.now())){
+
+      await Future.delayed(Duration(seconds: 1));
+
+      setState(() {
+        freeTimeTrue = true;
+      });
+
+      await Future.delayed(Duration(seconds: 1));
+
       return true;
     }else{
       return false;
