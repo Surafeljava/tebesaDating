@@ -52,9 +52,7 @@ dependencies:
   network_to_file_image: ^2.3.8
   lottie: ^0.7.0+1
   mailer:
-  agora_rtc_engine: ^3.3.1
   permission_handler:
-  microphone:
   audio_recorder: ^1.0.2
   path_provider:
   just_audio:
@@ -81,8 +79,6 @@ flutter:
     - assets/lottie/
     - assets/logo/
     - assets/icons/navigation/
-    - assets/test/
-    - assets/banks/
     - assets/boarding/
 
   # An image asset can refer to one or more resolution-specific "variants", see
