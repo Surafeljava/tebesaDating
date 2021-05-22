@@ -14,6 +14,59 @@
       },
       "oauth_client": [
         {
+          "client_id": "70911594396-n6oesu066kh3q93e4hee3m3k9k4t0rjk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tebesa.dating",
+            "certificate_hash": "d9b556537f0a654754414d8f374cfc540e6528dd"
+          }
+        },
+        {
+          "client_id": "70911594396-tel5u6kbsun9sbo2o5pth7a27q068qai.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tebesa.dating",
+            "certificate_hash": "a133a9fb8b8da523a8297bf83e046794453871cb"
+          }
+        },
+        {
+          "client_id": "70911594396-jtcmd2u849si0qvd4l91lr9a69n9flpu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyU9FzxgPPISGKMq3T4PSVzlsB2US9ctY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70911594396-jtcmd2u849si0qvd4l91lr9a69n9flpu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70911594396:android:825737d6606eb2b236c259",
+        "android_client_info": {
+          "package_name": "com.tebesaadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70911594396-5jpkedk66v6e6os4gd2p321cdf8rqfc9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tebesaadmin",
+            "certificate_hash": "a507f55de73367bcc62b555f58c73c0a9e554061"
+          }
+        },
+        {
           "client_id": "70911594396-jtcmd2u849si0qvd4l91lr9a69n9flpu.apps.googleusercontent.com",
           "client_type": 3
         }
