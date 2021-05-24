@@ -119,15 +119,6 @@ class _MessagePageState extends State<MessagePage> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.videocam, color: Colors.grey[800], size: 28.0,),
-            color: Colors.white,
-            onPressed: (){
-              //generate
-            },
-          ),
-        ],
       ),
       body: Container(
         color: Colors.white,

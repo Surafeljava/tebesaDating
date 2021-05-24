@@ -84,7 +84,7 @@ class _AddPhotosState extends State<AddPhotos> {
                       SpringButtonType.OnlyScale,
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: index > photos.length ? Colors.white : Colors.grey[100],
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         child: photos.length>=index+1 ?
@@ -99,12 +99,12 @@ class _AddPhotosState extends State<AddPhotos> {
                             ),
                           ),
                         ) : Center(
-                          child: SvgPicture.asset(
+                          child: index == photos.length ? SvgPicture.asset(
                             plusIcon,
                             width: 25.0,
                             height: 25.0,
                             color: Colors.grey[300],
-                          ),
+                          ) : Container(),
                         ),
                       ),
                       useCache: false,

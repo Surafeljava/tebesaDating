@@ -303,15 +303,6 @@ class _MainHomeState extends State<MainHome> {
           },
         ),
         title: Text(pagesName[selectedPage], style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.grey[800],),
-            color: Colors.white,
-            onPressed: (){
-              print('More');
-            },
-          ),
-        ],
       ),
       floatingActionButton: Container(
         height: 45.0,
