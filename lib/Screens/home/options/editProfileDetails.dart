@@ -15,7 +15,6 @@ class EditProfileDetails extends StatefulWidget {
 }
 
 class _EditProfileDetailsState extends State<EditProfileDetails> {
-
   bool done = false;
 
   DatabaseService _databaseService = new DatabaseService();
@@ -31,7 +30,6 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   @override
   void initState() {
     super.initState();
-    // TODO: get my info and add them to the respective variables
 
     _databaseService.getMyInfo().then((value) {
       setState(() {
@@ -43,7 +41,6 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
       bDateController = new TextEditingController(text: me.bDate);
       bioController = new TextEditingController(text: me.bio);
     });
-
   }
 
   @override
@@ -52,15 +49,25 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.white,
-        title: Text(Lang.language==0 ? 'Edit Profile Details' : 'ዝርዝር አስተካክል', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
+        title: Text(
+          Lang.language == 0 ? 'Edit Profile Details' : 'ዝርዝር አስተካክል',
+          style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey[800],
+              letterSpacing: 1.0),
+        ),
         iconTheme: IconThemeData(
           color: Colors.grey[800],
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.close, color: Colors.grey[800],),
+            icon: Icon(
+              Icons.close,
+              color: Colors.grey[800],
+            ),
             color: Colors.white,
-            onPressed: (){
+            onPressed: () {
               Navigator.of(context).pop();
             },
           ),
@@ -71,131 +78,126 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
         color: Colors.white,
         child: ListView(
           children: [
-            SizedBox(height: 15.0,),
+            SizedBox(
+              height: 15.0,
+            ),
             TextField(
               autofocus: true,
               keyboardType: TextInputType.emailAddress,
               controller: emailController,
               style: TextStyle(
-                  fontSize: 18.0,
-                  letterSpacing: 1.0,
-                  color: Colors.black
-              ),
+                  fontSize: 18.0, letterSpacing: 1.0, color: Colors.black),
               decoration: InputDecoration(
-                labelText: Lang.language==0 ? 'Email' : 'ኢሜል',
+                labelText: Lang.language == 0 ? 'Email' : 'ኢሜል',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
-                hintText: Lang.language==0 ? 'Email' : 'ኢሜል',
+                hintText: Lang.language == 0 ? 'Email' : 'ኢሜል',
                 hintStyle: TextStyle(
                     fontSize: 18.0,
                     letterSpacing: 1.0,
-                    color: Colors.grey[700]
-                ),
+                    color: Colors.grey[700]),
               ),
             ),
-
-            SizedBox(height: 15.0,),
-
+            SizedBox(
+              height: 15.0,
+            ),
             TextField(
               autofocus: true,
               keyboardType: TextInputType.name,
               style: TextStyle(
-                  fontSize: 18.0,
-                  letterSpacing: 1.0,
-                  color: Colors.black
-              ),
+                  fontSize: 18.0, letterSpacing: 1.0, color: Colors.black),
               controller: fullNameController,
               decoration: InputDecoration(
-                labelText: Lang.language==0 ? 'FullName' : 'ሙሉ ስም',
+                labelText: Lang.language == 0 ? 'FullName' : 'ሙሉ ስም',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
-                hintText: Lang.language==0 ? 'FullName' : 'ሙሉ ስም',
+                hintText: Lang.language == 0 ? 'FullName' : 'ሙሉ ስም',
                 hintStyle: TextStyle(
                     fontSize: 18.0,
                     letterSpacing: 1.0,
-                    color: Colors.grey[700]
-                ),
+                    color: Colors.grey[700]),
               ),
             ),
-
-            SizedBox(height: 15.0,),
-
+            SizedBox(
+              height: 15.0,
+            ),
             TextField(
               inputFormatters: [
-                MultiMaskedTextInputFormatter(
-                    masks: ['xx/xx/xxxx',], separator: '/')
+                MultiMaskedTextInputFormatter(masks: [
+                  'xx/xx/xxxx',
+                ], separator: '/')
               ],
               autofocus: true,
               keyboardType: TextInputType.number,
               controller: bDateController,
               style: TextStyle(
-                  fontSize: 18.0,
-                  letterSpacing: 1.0,
-                  color: Colors.black
-              ),
+                  fontSize: 18.0, letterSpacing: 1.0, color: Colors.black),
               decoration: InputDecoration(
-                labelText: Lang.language==0 ? 'BirthDate' : 'ልደት',
+                labelText: Lang.language == 0 ? 'BirthDate' : 'ልደት',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
-                hintText: Lang.language==0 ? 'BirthDate' : 'ልደት',
+                hintText: Lang.language == 0 ? 'BirthDate' : 'ልደት',
                 hintStyle: TextStyle(
                     fontSize: 18.0,
                     letterSpacing: 1.0,
-                    color: Colors.grey[700]
-                ),
+                    color: Colors.grey[700]),
               ),
             ),
-
             TextField(
               autofocus: true,
               keyboardType: TextInputType.text,
               style: TextStyle(
-                  fontSize: 18.0,
-                  letterSpacing: 1.0,
-                  color: Colors.black
-              ),
+                  fontSize: 18.0, letterSpacing: 1.0, color: Colors.black),
               maxLines: 3,
               minLines: 2,
               controller: bioController,
               decoration: InputDecoration(
-                labelText: Lang.language==0 ? 'bio' : 'ባዮ',
+                labelText: Lang.language == 0 ? 'bio' : 'ባዮ',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
-                hintText: Lang.language==0 ? 'Bio' : 'ባዮ',
+                hintText: Lang.language == 0 ? 'Bio' : 'ባዮ',
                 hintStyle: TextStyle(
                     fontSize: 18.0,
                     letterSpacing: 1.0,
-                    color: Colors.grey[700]
-                ),
+                    color: Colors.grey[700]),
               ),
             ),
-
-            SizedBox(height: 20.0,),
-
+            SizedBox(
+              height: 20.0,
+            ),
             Center(
               child: SpringButton(
                 SpringButtonType.OnlyScale,
                 Container(
-                  width: MediaQuery.of(context).size.width-30,
+                  width: MediaQuery.of(context).size.width - 30,
                   height: 50.0,
                   decoration: BoxDecoration(
                       color: Color(0xFFD12043),
-                      borderRadius: BorderRadius.circular(10.0)
-                  ),
+                      borderRadius: BorderRadius.circular(10.0)),
                   child: Center(
-                    child:
-                    Text(
-                      Lang.language==0 ? 'Save' : 'አስቀምጥ',
-                      style: TextStyle(color: Colors.white, fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
+                    child: Text(
+                      Lang.language == 0 ? 'Save' : 'አስቀምጥ',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          letterSpacing: 0.0,
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
                 useCache: false,
-                onTap: () async{
-
+                onTap: () async {
                   //Update the userdata
                   //email, fullname, bDate and bio
-                  String email = emailController.text.isEmpty ? me.email : emailController.text;
-                  String fullName =fullNameController.text.isEmpty ? me.fullName : fullNameController.text;
-                  String bDate = bDateController.text.isEmpty ? me.bDate : bDateController.text;
-                  String bio = bioController.text.isEmpty ? me.bio : bioController.text;
-                  await _databaseService.updateUserInfo( email , fullName, bDate , bio);
+                  String email = emailController.text.isEmpty
+                      ? me.email
+                      : emailController.text;
+                  String fullName = fullNameController.text.isEmpty
+                      ? me.fullName
+                      : fullNameController.text;
+                  String bDate = bDateController.text.isEmpty
+                      ? me.bDate
+                      : bDateController.text;
+                  String bio =
+                      bioController.text.isEmpty ? me.bio : bioController.text;
+                  await _databaseService.updateUserInfo(
+                      email, fullName, bDate, bio);
 
                   Navigator.of(context).pop();
                 },
