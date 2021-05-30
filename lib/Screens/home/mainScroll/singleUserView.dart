@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:dating/Screens/home/mainScroll/matchState.dart';
+import 'package:dating/Screens/home/options/lang.dart';
 import 'package:dating/Services/databaseService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -150,11 +151,11 @@ class _SingleUserViewState extends State<SingleUserView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text("${_ageFromString(widget.userModel.bDate)}", style: TextStyle(fontSize: 20, color: Colors.grey[700], fontWeight: FontWeight.w800),),
-                        Text(" | ", style: TextStyle(fontSize: 20, color: Colors.grey[700], fontWeight: FontWeight.w800),),
+                        // Text("${_ageFromString(widget.userModel.bDate)}", style: TextStyle(fontSize: 20, color: Colors.grey[700], fontWeight: FontWeight.w800),),
+                        // Text(" | ", style: TextStyle(fontSize: 20, color: Colors.grey[700], fontWeight: FontWeight.w800),),
                         Expanded(
                           child: Text("${widget.userModel.fullName}",
-                            style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w400, letterSpacing: 1.0,),
+                            style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500, letterSpacing: 1.0,),
                           ),
                         ),
                         (widget.pageBack == null) ? Container() : widget.fromHome ? IconButton(
@@ -177,7 +178,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: Row(
                       children: [
-                        Text("Bio: ", style: TextStyle(fontSize: 17.0, color: Colors.grey[700], fontWeight: FontWeight.w500),),
+                        Text(Lang.language==0 ? 'Bio: ' : 'ባዮ: ', style: TextStyle(fontSize: 17.0, color: Colors.grey[700], fontWeight: FontWeight.w500),),
                         Expanded(child: Text(widget.userModel.bio, style: TextStyle(fontSize: 16.0, color: Colors.grey[700], fontWeight: FontWeight.w400),),),
                       ],
                     ),
@@ -187,7 +188,7 @@ class _SingleUserViewState extends State<SingleUserView> {
 
                   _checkIfLastSeen(widget.userModel.uid, _lastSeen) ?
                   Container(
-                    child: Expanded(child: Text('You have reacted to this user before.',
+                    child: Expanded(child: Text(Lang.language==0 ? 'You have reacted to this user before.' : 'ከዚህ በፊት ለዚህ ተጠቃሚ ምላሽ ሰጥተዋል',
                       style: TextStyle(fontSize: 17.0, color: Colors.grey[500], fontWeight: FontWeight.w400, letterSpacing: 0.5),
                     ),
                     ),

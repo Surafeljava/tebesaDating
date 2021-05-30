@@ -7,6 +7,8 @@ import 'package:multi_masked_formatter/multi_masked_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
 
+import 'lang.dart';
+
 class EditProfileDetails extends StatefulWidget {
   @override
   _EditProfileDetailsState createState() => _EditProfileDetailsState();
@@ -50,7 +52,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.white,
-        title: Text('Edit profile details', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
+        title: Text(Lang.language==0 ? 'Edit Profile Details' : 'ዝርዝር አስተካክል', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
         iconTheme: IconThemeData(
           color: Colors.grey[800],
         ),
@@ -80,9 +82,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                   color: Colors.black
               ),
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: Lang.language==0 ? 'Email' : 'ኢሜል',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
-                hintText: 'Email',
+                hintText: Lang.language==0 ? 'Email' : 'ኢሜል',
                 hintStyle: TextStyle(
                     fontSize: 18.0,
                     letterSpacing: 1.0,
@@ -103,9 +105,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
               ),
               controller: fullNameController,
               decoration: InputDecoration(
-                labelText: 'FullName',
+                labelText: Lang.language==0 ? 'FullName' : 'ሙሉ ስም',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
-                hintText: 'FullName',
+                hintText: Lang.language==0 ? 'FullName' : 'ሙሉ ስም',
                 hintStyle: TextStyle(
                     fontSize: 18.0,
                     letterSpacing: 1.0,
@@ -130,9 +132,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                   color: Colors.black
               ),
               decoration: InputDecoration(
-                labelText: 'BirthDate',
+                labelText: Lang.language==0 ? 'BirthDate' : 'ልደት',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
-                hintText: 'BirthDate',
+                hintText: Lang.language==0 ? 'BirthDate' : 'ልደት',
                 hintStyle: TextStyle(
                     fontSize: 18.0,
                     letterSpacing: 1.0,
@@ -153,9 +155,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
               minLines: 2,
               controller: bioController,
               decoration: InputDecoration(
-                labelText: 'Bio',
+                labelText: Lang.language==0 ? 'bio' : 'ባዮ',
                 labelStyle: TextStyle(color: Colors.grey[800], fontSize: 19.0),
-                hintText: 'Bio',
+                hintText: Lang.language==0 ? 'Bio' : 'ባዮ',
                 hintStyle: TextStyle(
                     fontSize: 18.0,
                     letterSpacing: 1.0,
@@ -179,7 +181,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                   child: Center(
                     child:
                     Text(
-                      'Save',
+                      Lang.language==0 ? 'Save' : 'አስቀምጥ',
                       style: TextStyle(color: Colors.white, fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
                     ),
                   ),

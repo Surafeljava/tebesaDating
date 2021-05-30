@@ -10,6 +10,7 @@ import 'package:dating/Screens/home/mainScroll/notifyAnimations.dart';
 import 'package:dating/Screens/home/mainScroll/topPicks.dart';
 import 'package:dating/Screens/home/matches/matchesPage.dart';
 import 'package:dating/Screens/home/options/editProfile.dart';
+import 'package:dating/Screens/home/options/lang.dart';
 import 'package:dating/Screens/messaging/mainMessagingPage.dart';
 import 'package:dating/Screens/registration/registration.dart';
 import 'package:dating/Services/authService.dart';
@@ -51,6 +52,7 @@ class _MainHomeState extends State<MainHome> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   List<String> pagesName = ['Tebesa', 'Likes', 'Matches', 'Messages', 'Top Picks'];
+  List<String> pagesNameAm = ['ጠበሳ', 'ወዳጆች', 'ግጥምጥሞሽ', 'መልዕክቶች', 'ምርጦች'];
 
   bool showLikesAnimation = false;
 
@@ -207,7 +209,7 @@ class _MainHomeState extends State<MainHome> {
 
                     Container(
                       alignment: Alignment.centerLeft,
-                      child: Text('bio', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.grey[400]),),
+                      child: Text(Lang.language==0 ? 'bio' : 'ባዮ', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.grey[500]),),
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
@@ -220,7 +222,7 @@ class _MainHomeState extends State<MainHome> {
 
                     Container(
                       alignment: Alignment.centerLeft,
-                      child: Text('email', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.grey[400]),),
+                      child: Text(Lang.language==0 ? 'email' : 'ኢሜል', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.grey[500]),),
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
@@ -233,7 +235,7 @@ class _MainHomeState extends State<MainHome> {
               Divider(),
 
               ListTile(
-                title: Text('Edit Profile', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
+                title: Text(Lang.language==0 ? 'Edit Profile' : 'መገለጫ አስተካክል', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
                 leading: Icon(Icons.edit, color: Colors.grey[800],),
                 onTap: (){
                   //Call profile edit page
@@ -242,7 +244,7 @@ class _MainHomeState extends State<MainHome> {
               ),
 
               onFreePackage ? ListTile(
-                title: Text('Account', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
+                title: Text(Lang.language==0 ? 'Account' : 'መለያ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
                 subtitle: Text('ON FREE TRIAL', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400, letterSpacing: 1.0, color: Colors.green),),
                 leading: Icon(Icons.attach_money, color: Colors.grey[800],),
                 onTap: (){
@@ -272,7 +274,7 @@ class _MainHomeState extends State<MainHome> {
               Spacer(),
 
               ListTile(
-                title: Text('LogOut', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
+                title: Text(Lang.language==0 ? 'LogOut' : 'ውጣ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.0),),
                 leading: Icon(Icons.logout, color: Colors.grey[800],),
                 onTap: (){
                   _authService.signOut();
@@ -302,7 +304,15 @@ class _MainHomeState extends State<MainHome> {
             _scaffoldKey.currentState.openDrawer();
           },
         ),
-        title: Text(pagesName[selectedPage], style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
+        actions: [
+          TextButton(
+            child: Text(Lang.language==0 ? 'አማ 🇪🇹' : 'EN 🇺🇸', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17.0),),
+            onPressed: () async{
+              changeLanguage();
+            },
+          )
+        ],
+        title: Text(Lang.language==0 ? pagesName[selectedPage] : pagesNameAm[selectedPage], style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
       ),
       floatingActionButton: Container(
         height: 45.0,
@@ -419,5 +429,32 @@ class _MainHomeState extends State<MainHome> {
       );
     }
   }
+
+  void changeLanguage() async{
+    final pref = await SharedPreferences.getInstance();
+    final userPref = pref.getString('language');
+
+    if(userPref==null){
+      pref.setString('language', 'en');
+      setState(() {
+        Lang.language = 1;
+      });
+    }else{
+      if(userPref=='en'){
+        pref.setString('language', 'am');
+        setState(() {
+          Lang.language = 0;
+        });
+      }else{
+        pref.setString('language', 'en');
+        setState(() {
+          Lang.language = 1;
+        });
+      }
+    }
+
+  }
+
+
 
 }

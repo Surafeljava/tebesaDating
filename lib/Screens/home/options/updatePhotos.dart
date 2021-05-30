@@ -11,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:spring_button/spring_button.dart';
 
+import 'lang.dart';
+
 class UpdatePhotos extends StatefulWidget {
   @override
   _UpdatePhotosState createState() => _UpdatePhotosState();
@@ -84,7 +86,7 @@ class _UpdatePhotosState extends State<UpdatePhotos> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.white,
-        title: Text('Update Photos', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
+        title: Text(Lang.language==0 ? 'Edit Profile' : 'ፎቶ አስተካክል', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
         iconTheme: IconThemeData(
           color: Colors.grey[800],
         ),
@@ -107,9 +109,9 @@ class _UpdatePhotosState extends State<UpdatePhotos> {
             color: Colors.white,
             child: ListView(
               children: [
-                Text('Add photos', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 22.0, letterSpacing: 0.0, color: Colors.grey[800]),),
+                Text(Lang.language==0 ? 'Add Photo' : 'ፎቶ ጨምር', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 22.0, letterSpacing: 0.0, color: Colors.grey[800]),),
                 SizedBox(height: 5.0,),
-                Text('Upload or take pictures', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16.0, letterSpacing: 0.0, color: Colors.grey[800]),),
+                Text( Lang.language==0 ? 'Upload or take pictures ' : 'ፎቶግራፍ ያንሱ ወይም ከጋለሪ ይምረጡ', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16.0, letterSpacing: 0.0, color: Colors.grey[800]),),
                 SizedBox(height: 25.0,),
 
                 Container(
@@ -181,7 +183,7 @@ class _UpdatePhotosState extends State<UpdatePhotos> {
                       child: Center(
                         child:
                         Text(
-                          'Save',
+                          Lang.language==0 ? 'Save' : 'አስቀምጥ',
                           style: TextStyle(color: photos.length==0 ? Colors.grey[800] : Colors.white, fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
                         ),
                       ),

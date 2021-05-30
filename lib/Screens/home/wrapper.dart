@@ -17,6 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dating/Screens/loading/checkingFreeDate.dart';
 
+import 'options/lang.dart';
+
 class Wrapper extends StatefulWidget {
   @override
   _WrapperState createState() => _WrapperState();
@@ -214,6 +216,28 @@ class _WrapperState extends State<Wrapper> {
       return false;
     }
 
+  }
+
+  void getLanguage() async{
+    final pref = await SharedPreferences.getInstance();
+    final userPref = pref.getString('language');
+
+    if(userPref==null){
+      pref.setString('language', 'en');
+      setState(() {
+        Lang.language = 1;
+      });
+    }else{
+      if(userPref=='en'){
+        setState(() {
+          Lang.language = 1;
+        });
+      }else{
+        setState(() {
+          Lang.language = 0;
+        });
+      }
+    }
   }
 
 }

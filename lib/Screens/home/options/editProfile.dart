@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:spring_button/spring_button.dart';
 
+import 'lang.dart';
+
 class EditProfile extends StatefulWidget {
   @override
   _EditProfileState createState() => _EditProfileState();
@@ -18,7 +20,7 @@ class _EditProfileState extends State<EditProfile> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.white,
-        title: Text('Profile Edit', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
+        title: Text(Lang.language==0 ? 'Edit Profile' : 'መገለጫ አስተካክል', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.grey[800], letterSpacing: 1.0),),
         iconTheme: IconThemeData(
           color: Colors.grey[800],
         ),
@@ -99,7 +101,7 @@ class _EditProfileState extends State<EditProfile> {
                 child: Center(
                   child:
                   Text(
-                    'Update Photos',
+                    Lang.language==0 ? 'Edit Profile' : 'ፎቶ አስተካክል',
                     style: TextStyle(color: Colors.grey[800], fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -124,7 +126,7 @@ class _EditProfileState extends State<EditProfile> {
                 child: Center(
                   child:
                   Text(
-                    'Update Details',
+                    Lang.language==0 ? 'Edit Profile Details' : 'ዝርዝር አስተካክል',
                     style: TextStyle(color: Colors.grey[800], fontSize: 18, letterSpacing: 0.0, fontWeight: FontWeight.w600),
                   ),
                 ),
