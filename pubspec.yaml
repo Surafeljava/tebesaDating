@@ -30,7 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   firebase_auth:
   cloud_firestore:
-  provider: ^4.0.5
+  provider: ^5.0.0
   flutter_spinkit: ^4.1.2+1
   firebase_core: ^0.5.3
   firebase_storage:
@@ -53,10 +53,9 @@ dependencies:
   lottie: ^0.7.0+1
   mailer:
   permission_handler:
-  audio_recorder: ^1.0.2
   path_provider:
   just_audio:
-  easy_localization:
+  flutter_sound: 
 
 
 dev_dependencies:
