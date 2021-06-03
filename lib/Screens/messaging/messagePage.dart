@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:audio_recorder/audio_recorder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dating/Models/messageModels.dart';
 import 'package:dating/Screens/messaging/messagesDisplay.dart';
@@ -10,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:lottie/lottie.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MessagePage extends StatefulWidget {
@@ -223,16 +221,6 @@ class _MessagePageState extends State<MessagePage> {
                                   setState(() {
                                     recordState = 2;
                                   });
-
-                                  // Recording recording =
-                                  //     await AudioRecorder.stop();
-                                  // setState(() {
-                                  //   currentRecordedUrl = recording.path;
-                                  //   currentRecordedTime =
-                                  //       '${format(recording.duration)}';
-                                  // });
-                                  // print(
-                                  //     "Path : ${recording.path},  Format : ${recording.audioOutputFormat},  Duration : ${recording.duration},  Extension : ${recording.extension},");
                                 },
                               )
                             : Container(),
@@ -316,15 +304,6 @@ class _MessagePageState extends State<MessagePage> {
                                   currentRecordedTime = 'Recorded';
                                 });
                                 print('****** Result: $result');
-
-                                // final directory =
-                                //     await getApplicationDocumentsDirectory();
-                                // String path = directory.path;
-
-                                // await AudioRecorder.start(
-                                //     path:
-                                //         '$path/${DateTime.now().toIso8601String()}',
-                                //     audioOutputFormat: AudioOutputFormat.WAV);
                               },
                             ),
                       Expanded(child: textBoxWidget(_messageTextController)),
