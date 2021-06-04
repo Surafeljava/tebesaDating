@@ -35,8 +35,6 @@ dependencies:
   firebase_core: ^0.5.3
   firebase_storage:
   shared_preferences: ^0.5.12+4
-  country_codes: ^1.0.3
-  intl_phone_field: ^1.4.2
   pin_code_fields: 5.2.0
   spring_button: ^1.0.14
   multi_masked_formatter: ^0.1.1
@@ -54,7 +52,10 @@ dependencies:
   mailer:
   permission_handler:
   just_audio:
-  flutter_sound: 
+  flutter_sound:
+  country_picker:
+    git:
+      url: https://github.com/equbapp/country_picker.git
 
 
 dev_dependencies:

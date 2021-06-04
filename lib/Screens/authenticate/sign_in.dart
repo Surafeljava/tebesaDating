@@ -1,3 +1,4 @@
+import 'package:country_picker/country_picker.dart';
 import 'package:dating/Screens/authenticate/AuthState.dart';
 import 'package:dating/Services/authService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,6 +36,11 @@ class _SignInState extends State<SignIn> {
   bool errorGot = false;
   String errorMessage = '';
 
+  //For the new country picker
+  String phoneCode = '+251';
+  String flag = '🇪🇹';
+  String dialCode = '+251';
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +69,7 @@ class _SignInState extends State<SignIn> {
         elevation: 0.0,
         backgroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
+      body: Container(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10.0),
           color: Colors.white,
@@ -126,46 +132,126 @@ class _SignInState extends State<SignIn> {
                 height: 10.0,
               ),
 
+              // IntlPhoneField(
+              //         controller: phoneController,
+              //         keyboardType: TextInputType.phone,
+              //         style: TextStyle(
+              //           fontSize: 20.0,
+              //           color: Colors.black,
+              //           letterSpacing: 2,
+              //         ),
+              //         decoration: InputDecoration(
+              //           border: OutlineInputBorder(
+              //             borderSide: BorderSide(),
+              //           ),
+              //           contentPadding:
+              //               EdgeInsets.only(left: 20.0, right: 20.0, top: 10),
+              //           hintText: 'Phone Number',
+              //           hintStyle: TextStyle(
+              //               fontSize: 18.0,
+              //               fontWeight: FontWeight.w300,
+              //               color: Colors.grey[600],
+              //               letterSpacing: 1.0),
+              //           filled: true,
+              //           fillColor: Colors.grey[200],
+              //           enabledBorder: OutlineInputBorder(
+              //             borderRadius: BorderRadius.circular(35.0),
+              //             borderSide:
+              //                 BorderSide(color: Colors.transparent, width: 0.0),
+              //           ),
+              //           focusedBorder: OutlineInputBorder(
+              //             borderRadius: BorderRadius.circular(35.0),
+              //             borderSide:
+              //                 BorderSide(color: Colors.transparent, width: 0.0),
+              //           ),
+              //         ),
+              //         initialCountryCode: 'ET',
+              //         onChanged: (phone) {
+              //           setState(() {
+              //             _phone = phone.completeNumber;
+              //           });
+              //         },
+              //       )
+
               !verify
-                  ? IntlPhoneField(
+                  ? TextFormField(
                       controller: phoneController,
+                      autofocus: false,
                       keyboardType: TextInputType.phone,
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.black,
-                        letterSpacing: 2,
+                        letterSpacing: 1.0,
                       ),
+                      onChanged: (phone) {
+                        setState(() {
+                          _phone = dialCode + phone;
+                        });
+                      },
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(),
+                        prefixIcon: InkWell(
+                          child: Container(
+                            width: 100.0,
+                            color: Colors.transparent,
+                            padding: EdgeInsets.only(right: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  flag,
+                                  style: TextStyle(
+                                    fontSize: 17.0,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  dialCode,
+                                  style: TextStyle(
+                                    fontSize: 17.0,
+                                    color: Colors.grey[700],
+                                    letterSpacing: 0.5,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            CountryPicker picker = new CountryPicker(
+                                context: context,
+                                title: 'Tebesa Country Picker',
+                                onSelected: (code) {
+                                  setState(() {
+                                    dialCode = code.dialCode;
+                                    flag = code.flag;
+                                  });
+                                });
+                            picker.showCountryPicker();
+                          },
                         ),
                         contentPadding:
                             EdgeInsets.only(left: 20.0, right: 20.0, top: 10),
+                        filled: true,
+                        fillColor: Colors.grey[200],
                         hintText: 'Phone Number',
                         hintStyle: TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.w300,
                             color: Colors.grey[600],
-                            letterSpacing: 1.0),
-                        filled: true,
-                        fillColor: Colors.grey[200],
+                            letterSpacing: 0.5),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(35.0),
+                          borderRadius: BorderRadius.circular(10.0),
                           borderSide:
-                              BorderSide(color: Colors.transparent, width: 0.0),
+                              BorderSide(color: Colors.transparent, width: 1.5),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(35.0),
+                          borderRadius: BorderRadius.circular(10.0),
                           borderSide:
-                              BorderSide(color: Colors.transparent, width: 0.0),
+                              BorderSide(color: Colors.transparent, width: 1.5),
                         ),
                       ),
-                      initialCountryCode: 'ET',
-                      onChanged: (phone) {
-                        setState(() {
-                          _phone = phone.completeNumber;
-                        });
-                      },
                     )
                   : Container(
                       padding: EdgeInsets.symmetric(

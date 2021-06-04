@@ -106,13 +106,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
-  country_codes:
+  country_picker:
     dependency: "direct main"
     description:
-      name: country_codes
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
+      path: "."
+      ref: HEAD
+      resolved-ref: e5349ae2d4e79f9eeb4cf04f647867f9b19d089f
+      url: "https://github.com/equbapp/country_picker.git"
+    source: git
+    version: "0.0.1"
   crypto:
     dependency: transitive
     description:
@@ -317,13 +319,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
-  intl_phone_field:
-    dependency: "direct main"
-    description:
-      name: intl_phone_field
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.4.4"
   js:
     dependency: transitive
     description:
