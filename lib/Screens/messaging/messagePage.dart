@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dating/Models/messageModels.dart';
 import 'package:dating/Screens/messaging/messagesDisplay.dart';
+import 'package:dating/Screens/video_call_screen/video_call_screen.dart';
 import 'package:dating/Services/databaseService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,6 +61,7 @@ class _MessagePageState extends State<MessagePage> {
 
     Permission.microphone.status.then((value) {
       print('***** Permission: ${value.toString()} *****');
+      Permission.microphone.request();
     });
   }
 
@@ -100,6 +102,21 @@ class _MessagePageState extends State<MessagePage> {
             Navigator.of(context).pop();
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.video_call,
+              color: Colors.redAccent,
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => VideoCallScreen(),
+                ),
+              );
+            },
+          ),
+        ],
         title: Row(
           children: [
             CircleAvatar(
