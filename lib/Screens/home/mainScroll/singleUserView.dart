@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dating/Models/userModel.dart';
 import 'package:dating/Screens/home/mainScroll/mainHomeState.dart';
 import 'package:dating/Screens/home/mainScroll/matchState.dart';
+import 'package:dating/Screens/home/options/lang.dart';
 import 'package:dating/Services/databaseService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,15 @@ class _SingleUserViewState extends State<SingleUserView> {
     return false;
   }
 
+  int _ageFromString(String dateString){
+
+    List<String> list = dateString.split("/");
+    DateTime date = new DateTime(int.parse(list[2]), int.parse(list[1]), int.parse(list[0]) );
+
+    return (DateTime.now().difference(date).inDays / 365).floor();
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -100,7 +110,7 @@ class _SingleUserViewState extends State<SingleUserView> {
                     ),
                   ),
 
-                  Spacer(flex: 1,),
+                  SizedBox(height: 10.0,),
 
                   Container(
                     height: 65,
@@ -134,23 +144,27 @@ class _SingleUserViewState extends State<SingleUserView> {
                     ),
                   ),
 
-                  Spacer(flex: 1,),
+
 
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Expanded(child: Text(widget.userModel.fullName, style: TextStyle(fontSize: 20.0, color: Colors.black, fontWeight: FontWeight.w400),)),
-                        (widget.pageBack == null) ? Container() : widget.fromHome ? TextButton.icon(
-                          label: Text('PRV'),
+                        // Text("${_ageFromString(widget.userModel.bDate)}", style: TextStyle(fontSize: 20, color: Colors.grey[700], fontWeight: FontWeight.w800),),
+                        // Text(" | ", style: TextStyle(fontSize: 20, color: Colors.grey[700], fontWeight: FontWeight.w800),),
+                        Expanded(
+                          child: Text("${widget.userModel.fullName}",
+                            style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500, letterSpacing: 1.0,),
+                          ),
+                        ),
+                        (widget.pageBack == null) ? Container() : widget.fromHome ? IconButton(
                           icon: Icon(Icons.keyboard_arrow_up, size: 30.0, color: Color(0xFFD12043),),
                           onPressed: (){
                             widget.pageBack();
                           },
                         ) : Container(),
-                        (widget.fromHome && widget.changeThePage!=null) ? TextButton.icon(
-                          label: Text('NXT'),
+                        (widget.fromHome && widget.changeThePage!=null) ? IconButton(
                           icon: Icon(Icons.keyboard_arrow_down, size: 30.0, color: Color(0xFFD12043),),
                           onPressed: (){
                             widget.changeThePage();
@@ -160,11 +174,24 @@ class _SingleUserViewState extends State<SingleUserView> {
                     ),
                   ),
 
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Row(
+                      children: [
+                        Text(Lang.language==0 ? 'Bio: ' : 'ባዮ: ', style: TextStyle(fontSize: 17.0, color: Colors.grey[700], fontWeight: FontWeight.w500),),
+                        Expanded(child: Text(widget.userModel.bio, style: TextStyle(fontSize: 16.0, color: Colors.grey[700], fontWeight: FontWeight.w400),),),
+                      ],
+                    ),
+                  ),
+
                   Spacer(flex: 1,),
 
                   _checkIfLastSeen(widget.userModel.uid, _lastSeen) ?
                   Container(
-                    child: Text('Seen Before'),
+                    child: Expanded(child: Text(Lang.language==0 ? 'You have reacted to this user before.' : 'ከዚህ በፊት ለዚህ ተጠቃሚ ምላሽ ሰጥተዋል',
+                      style: TextStyle(fontSize: 17.0, color: Colors.grey[500], fontWeight: FontWeight.w400, letterSpacing: 0.5),
+                    ),
+                    ),
                   ) :
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

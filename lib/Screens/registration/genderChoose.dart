@@ -71,6 +71,7 @@ class _GenderChooseState extends State<GenderChoose> {
                   setState(() {
                     selected = 0;
                     gender = 'Female';
+                    interest = 'Male';
                     done = true;
                   });
                 },
@@ -105,6 +106,7 @@ class _GenderChooseState extends State<GenderChoose> {
                   setState(() {
                     selected = 1;
                     gender = 'Male';
+                    interest = 'Female';
                     done = true;
                   });
                 },

@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.1+2
+version: 1.0.4+5
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -30,13 +30,11 @@ dependencies:
   cupertino_icons: ^1.0.0
   firebase_auth:
   cloud_firestore:
-  provider: ^4.0.5
+  provider: ^5.0.0
   flutter_spinkit: ^4.1.2+1
   firebase_core: ^0.5.3
   firebase_storage:
   shared_preferences: ^0.5.12+4
-  country_codes: ^1.0.3
-  intl_phone_field: ^1.4.2
   pin_code_fields: 5.2.0
   spring_button: ^1.0.14
   multi_masked_formatter: ^0.1.1
@@ -53,9 +51,11 @@ dependencies:
   lottie: ^0.7.0+1
   mailer:
   permission_handler:
-  audio_recorder: ^1.0.2
-  path_provider:
   just_audio:
+  flutter_sound:
+  country_picker:
+    git:
+      url: https://github.com/equbapp/country_picker.git
 
 
 dev_dependencies:

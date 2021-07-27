@@ -11,7 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
@@ -30,6 +30,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         StreamProvider(
           create: (context) => AuthService().user,
+          initialData: null,
         ),
         ChangeNotifierProvider(
           create: (context) => Registration(),
@@ -59,8 +60,7 @@ class _MyAppState extends State<MyApp> {
           theme: ThemeData(
             primarySwatch: Colors.pink,
           ),
-          home: Wrapper()
-      ),
+          home: Wrapper()),
     );
   }
 }
