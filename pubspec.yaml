@@ -35,7 +35,7 @@ dependencies:
   firebase_core: ^0.5.3
   firebase_storage:
   shared_preferences: ^0.5.12+4
-  pin_code_fields: 5.2.0
+  pin_code_fields: ^7.3.0
   spring_button: ^1.0.14
   multi_masked_formatter: ^0.1.1
   flutter_svg:
